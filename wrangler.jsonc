@@ -5,5 +5,12 @@
   "main": "./src/index.tsx",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "renovel",
+      "database_id": "dd655f27-c2eb-4c6d-bce7-bd5b10e99ba1"
+    }
+  ]
 }
