@@ -1,0 +1,30 @@
+{
+  "name": "ReNovel",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vite build --ssr",
+    "preview": "$npm_execpath run build && wrangler dev dist-server/index.js",
+    "deploy": "$npm_execpath run build && wrangler deploy dist-server/index.js",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20250524.0",
+    "@supabase/supabase-js": "github:supabase/supabase-js",
+    "@tailwindcss/vite": "^4.1.5",
+    "drizzle-orm": "^0.43.1",
+    "hono": "^4.7.8",
+    "react": "^19.1.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.2.4",
+    "@hono/vite-build": "^1.5.0",
+    "@types/react": "^19.1.5",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7",
+    "vite": "^6.1.1",
+    "vite-plugin-ssr-hot-reload": "^0.4.1",
+    "wrangler": "^4.4.0"
+  }
+}
