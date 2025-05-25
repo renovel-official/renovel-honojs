@@ -52,7 +52,6 @@ app.get('/api/v3/ranking', );
 app.get('/api/v3/blog', );
 
 app.get('/api/utils/placeholder/:workId', );
-app.get('/api/utils/placeholder/:workId/:width/:height', );
 
 
 // 管理APIルーティング

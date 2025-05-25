@@ -12,7 +12,7 @@ interface Novel {
     point: number;
     description: string;
     genre: NovelGenre;
-    tags?: string[];
+    tags?: string;
     text?: string;
     is_public?: boolean;
 
