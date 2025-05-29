@@ -5,6 +5,7 @@ import Env from "@/interfaces/utils/env";
 export default ((app: Hono<Env>) => {
     app.get('/api/v1/login', );
     app.get('/api/v1/register', );
+    app.get('/api/v1/session', );
     app.get('/api/v1/logout', );
     
     app.get('/api/v2/works', );

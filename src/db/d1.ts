@@ -3,7 +3,7 @@ import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
 // accountsテーブル
 export const accounts = sqliteTable('accounts', {
   id: integer('id').primaryKey(),
-  slug: text('slug'),
+  slug: text('slug').notNull(),
   name: text('name'),
   email: text('email'),
   password: text('password'),
