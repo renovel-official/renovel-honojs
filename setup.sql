@@ -1,4 +1,4 @@
-CREATE TABLE accounts (
+CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT,
   name TEXT,
@@ -74,4 +74,5 @@ CREATE TABLE sessions (
   token TEXT,
   email TEXT,
   created_at TEXT DEFAULT (datetime('now'))
+  last_logined_at INTEGER DEFAULT (datetime('now'))
 );

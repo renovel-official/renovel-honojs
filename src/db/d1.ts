@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 
-// accountsテーブル
-export const accounts = sqliteTable('accounts', {
+// usersテーブル
+export const users = sqliteTable('users', {
   id: integer('id').primaryKey(),
   slug: text('slug').notNull(),
   name: text('name'),
@@ -83,5 +83,6 @@ export const sessions = sqliteTable('sessions', {
   id: integer('id').primaryKey(),
   token: text('token'),
   email: text('email'),
-  created_at: integer('created_at'),
+  created_at: text('created_at'),
+  last_logined_at: integer('last_logined_at')
 });

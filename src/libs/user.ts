@@ -1,5 +1,5 @@
 import { DrizzleD1Database } from "drizzle-orm/d1";
-import { accounts } from "@/db/d1";
+import { users } from "@/db/d1";
 import { eq, or } from "drizzle-orm";
 import User from "@/interfaces/user";
 
@@ -17,9 +17,9 @@ async function getUser(
 ): Promise<User | null> {
   const result = await db
     .select()
-    .from(accounts)
+    .from(users)
     .where(
-      or(eq(accounts.email, email ?? ""), eq(accounts.slug, slug ?? ""))
+      or(eq(users.email, email ?? ""), eq(users.slug, slug ?? ""))
     )
     .execute();
 
@@ -45,14 +45,14 @@ async function registUser(
 ): Promise<boolean> {
   const existing = await db
     .select()
-    .from(accounts)
-    .where(or(eq(accounts.email, email), eq(accounts.slug, slug)))
+    .from(users)
+    .where(or(eq(users.email, email), eq(users.slug, slug)))
     .execute();
 
   if (existing.length !== 0) return false; // Already exists
 
   const insertResult = await db
-    .insert(accounts)
+    .insert(users)
     .values({
       slug,
       name,
@@ -83,10 +83,10 @@ async function updateUser(
   if (user === null) return false;
 
   const updateResult = await db
-    .update(accounts)
+    .update(users)
     .set(data)
     .where(
-      or(eq(accounts.email, email ?? ""), eq(accounts.slug, slug ?? ""))
+      or(eq(users.email, email ?? ""), eq(users.slug, slug ?? ""))
     )
     .execute();
 

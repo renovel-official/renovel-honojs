@@ -1,9 +1,9 @@
 import { getCookie, setCookie } from "hono/cookie";
-import { accounts } from "@/db/d1";
 import { bin2hex } from "@/utils/bin2hex";
 import { and, eq } from "drizzle-orm";
 import { Context } from "hono";
 import { sha256 } from "@/utils/hash";
+import { users } from "@/db/d1";
 import Env from "@/interfaces/utils/env";
 import Session from "@/interfaces/session";
 
@@ -27,16 +27,17 @@ async function loginHandler(c: Context<Env>) {
 
     const hashedPassword: string = sha256(data.password);
 
-    const users = await db.select().from(accounts).where(
+    const userResult = await db.select().from(users).where(
         and(
-            eq(accounts.email, data.email), 
-            eq(accounts.password, hashedPassword)
+            eq(users.email, data.email), 
+            eq(users.password, hashedPassword)
         )
     ).execute();
 
-    if (users.length === 0) {
+    if (userResult.length === 0) {
         return c.json({ success: false, message: "User not found. The password may be incorrect, or the user may not exist." })
     }
 
     const token = bin2hex(32);
+    
 }
