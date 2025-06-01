@@ -4,7 +4,7 @@ interface HeaderProps {
     login?: boolean;
 }
 
-export default function Header({ login = true }: HeaderProps) {
+export default function Header({ login = false }: HeaderProps) {
     return (
         <header class="bg-white shadow-md">
             <div class="container mx-auto px-4 py-3">

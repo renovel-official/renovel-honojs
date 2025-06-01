@@ -2,6 +2,7 @@ import { DrizzleD1Database } from 'drizzle-orm/d1';
 import { MainLayout } from './app/layout';
 import { drizzle } from 'drizzle-orm/d1';
 import { Hono } from 'hono';
+import Middleware from './app/middleware';
 import WebRouter from "@/handlers/web-handlers";
 import ApiRouter from "@/handlers/api-handlers";
 import Env from './interfaces/utils/env';
@@ -13,6 +14,7 @@ app.use('/*', async (c, next) => {
 
   return await next();
 });
+app.use('/*', Middleware);
 app.use('/*', MainLayout);
 
 WebRouter(app);
