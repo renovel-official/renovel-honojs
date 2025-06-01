@@ -1,17 +1,16 @@
-import { getCookie, setCookie } from "hono/cookie";
-import { bin2hex } from "@/utils/bin2hex";
+import { registSession } from "@/libs/session";
+import { setCookie } from "hono/cookie";
 import { and, eq } from "drizzle-orm";
 import { Context } from "hono";
 import { sha256 } from "@/utils/hash";
 import { users } from "@/db/d1";
 import Env from "@/interfaces/utils/env";
-import Session from "@/interfaces/session";
-
 
 
 interface loginPayload {
     email: string;
     password: string;
+    location?: string;
 }
 
 async function loginHandler(c: Context<Env>) {
@@ -22,6 +21,9 @@ async function loginHandler(c: Context<Env>) {
         await c.req.parseBody();
 
     if (! (data.email && data.password)) {
+        if (data.location) {
+            return c.redirect(`${data.location}?error=invalid_parameter`);
+        }
         return c.json({ success: false, message: "The parameter invalied" }, { status: 400 })
     }
 
@@ -35,9 +37,34 @@ async function loginHandler(c: Context<Env>) {
     ).execute();
 
     if (userResult.length === 0) {
+        if (data.location) {
+            return c.redirect(`${data.location}?error=user-not-found`);
+        }
         return c.json({ success: false, message: "User not found. The password may be incorrect, or the user may not exist." })
     }
 
-    const token = bin2hex(32);
+    const token = await registSession(db, data.email);
+
+    if (!token) {
+        if (data.location) {
+            return c.redirect(`${data.location}?error=failed-to-create-session`);
+        }
+        return c.json({ success: false, message: "Failed to create a session." })
+    }
+
+    if (data.location) {
+        setCookie(c, 's-token', token, {
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 24 * 7, // 604800秒 -> 7日 -> 一週間
+        });
+
+        return c.redirect(data.location);
+    }
     
+    return c.json({ success: true, message: "Login successful.", data: { token } });
 }
+
+export { loginHandler };

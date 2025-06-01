@@ -1,13 +1,17 @@
 import { Hono } from "hono";
+import { loginHandler } from "./api/v1/login";
+import { logoutHandler } from "./api/v1/logout";
+import { registerHandler } from "./api/v1/register";
 import placeholderHandler from "./api/utils/placeholder";
 import Env from "@/interfaces/utils/env";
 
 export default ((app: Hono<Env>) => {
-    app.get('/api/v1/login', );
-    app.get('/api/v1/register', );
-    app.get('/api/v1/session', );
-    app.get('/api/v1/logout', );
+    // アカウント関連api
+    app.post('/api/v1/login', loginHandler);
+    app.post('/api/v1/register', registerHandler);
+    app.get('/api/v1/logout', logoutHandler);
     
+    // 作品関連api
     app.get('/api/v2/works', );
     app.get('/api/v2/works/:workId', );
     app.get('/api/v2/works/:workId/good', )
