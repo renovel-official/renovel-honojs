@@ -73,6 +73,6 @@ CREATE TABLE sessions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   token TEXT,
   email TEXT,
-  created_at TEXT DEFAULT (datetime('now'))
-  last_logined_at INTEGER DEFAULT (datetime('now'))
+  created_at TEXT DEFAULT (datetime('now')),
+  last_logined_at INTEGER
 );
