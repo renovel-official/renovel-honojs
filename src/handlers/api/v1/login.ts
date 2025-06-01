@@ -10,6 +10,7 @@ import Env from "@/interfaces/utils/env";
 interface loginPayload {
     email: string;
     password: string;
+    origin?: string;
     location?: string;
 }
 
@@ -22,7 +23,7 @@ async function loginHandler(c: Context<Env>) {
 
     if (! (data.email && data.password)) {
         if (data.location) {
-            return c.redirect(`${data.location}?error=invalid_parameter`);
+            return c.redirect(`${data.origin}?error=invalid_parameter`);
         }
         return c.json({ success: false, message: "The parameter invalied" }, { status: 400 })
     }
@@ -38,7 +39,7 @@ async function loginHandler(c: Context<Env>) {
 
     if (userResult.length === 0) {
         if (data.location) {
-            return c.redirect(`${data.location}?error=user-not-found`);
+            return c.redirect(`${data.origin}?error=user-not-found`);
         }
         return c.json({ success: false, message: "User not found. The password may be incorrect, or the user may not exist." })
     }
@@ -47,7 +48,7 @@ async function loginHandler(c: Context<Env>) {
 
     if (!token) {
         if (data.location) {
-            return c.redirect(`${data.location}?error=failed-to-create-session`);
+            return c.redirect(`${data.origin}?error=failed-to-create-session`);
         }
         return c.json({ success: false, message: "Failed to create a session." })
     }

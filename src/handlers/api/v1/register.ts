@@ -9,6 +9,7 @@ interface registerPayload {
     email: string;
     password: string;
     location?: string;
+    origin?: string;
 }
 
 async function registerHandler(c: Context<Env>) {
@@ -19,7 +20,7 @@ async function registerHandler(c: Context<Env>) {
 
     if (! (data.name && data.slug && data.email && data.password)) {
         if (data.location) {
-            return c.redirect(`${data.location}?error=invalid_parameter`);
+            return c.redirect(`${data.origin}?error=invalid_parameter`);
         }
         return c.json({ success: false, message: "The parameter invalied" }, { status: 400 });
     }
@@ -29,7 +30,7 @@ async function registerHandler(c: Context<Env>) {
 
     if (!user) {
         if (data.location) {
-            return c.redirect(`${data.location}?error=failed-to-create-user`);
+            return c.redirect(`${data.origin}?error=failed-to-create-user`);
         }
         return c.json({ success: false, message: "Failed to create a user." }, { status: 400 });
     }

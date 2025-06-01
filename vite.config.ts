@@ -8,8 +8,12 @@ export default defineConfig(({ command, isSsrBuild }) => {
   const common = {
     resolve: {
       alias: {
-        '@': '/src', // ← Cloudflare Workers でも使えるエイリアスの書き方
+        '@': '/src',
       },
+    },
+    // JSX の設定（Preact ベースの JSX）
+    esbuild: {
+      jsxImportSource: 'hono/jsx',
     },
   }
 
@@ -17,7 +21,7 @@ export default defineConfig(({ command, isSsrBuild }) => {
     return {
       ...common,
       plugins: [
-        // ssrHotReload(),
+        // ssrHotReload(), // 有効にしたければコメントアウト解除
         cloudflare(),
         tailwindcss()
       ]
@@ -40,6 +44,8 @@ export default defineConfig(({ command, isSsrBuild }) => {
 
   return {
     ...common,
-    plugins: [build({ outputDir: 'dist-server' })]
+    plugins: [
+      build({ outputDir: 'dist-server' })
+    ]
   }
 })

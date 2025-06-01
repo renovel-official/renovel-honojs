@@ -22,6 +22,7 @@
     "@hono/vite-build": "^1.5.0",
     "@types/react": "^19.1.5",
     "autoprefixer": "^10.4.21",
+    "miniflare": "^4.20250525.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.7",
     "vite": "^6.1.1",

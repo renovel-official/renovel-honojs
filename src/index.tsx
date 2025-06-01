@@ -5,7 +5,6 @@ import { Hono } from 'hono';
 import WebRouter from "@/handlers/web-handlers";
 import ApiRouter from "@/handlers/api-handlers";
 import Env from './interfaces/utils/env';
-
 const app = new Hono<Env>();
 
 // 設定
@@ -14,8 +13,6 @@ app.use('/*', async (c, next) => {
 
   return await next();
 });
-
-// テンプレート
 app.use('/*', MainLayout);
 
 WebRouter(app);

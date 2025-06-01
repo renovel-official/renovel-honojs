@@ -1,11 +1,12 @@
 import { Hono } from "hono";
 import Env from "@/interfaces/utils/env";
+import RootHandler from "./web/root";
 
 export default ((app: Hono<Env>) => {
     // Webルーティング
-    app.get('/',);
+    app.get('/', RootHandler);
 
-    app.get('/works/:workId',);
+    app.get('/works/:workId', );
     app.get('/works/:workId/episodes/:episodeId',);
 
     app.get('/users/:userId',);
