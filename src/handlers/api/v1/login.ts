@@ -6,66 +6,66 @@ import { sha256 } from "@/utils/hash";
 import { users } from "@/db/d1";
 import Env from "@/interfaces/utils/env";
 
-
-interface loginPayload {
-    email: string;
-    password: string;
-    origin?: string;
-    location?: string;
+interface LoginPayload {
+  email: string;
+  password: string;
+  origin?: string;
+  location?: string;
 }
 
 async function loginHandler(c: Context<Env>) {
-    const db = c.get('db');
-    const contentType: string = c.req.header()['content-type'];
-    const data: loginPayload = contentType.includes('json') ? 
-        await c.req.json() :
-        await c.req.parseBody();
+  const db = c.get("db");
+  const contentType = c.req.header("content-type") || "";
 
-    if (!(data.email && data.password)) {
-        if (data.location) {
-            return c.redirect(`${data.origin}?error=invalid_parameter`);
-        }
-        return c.json({ success: false, message: "The parameter invalied" }, { status: 400 })
-    }
+  let data: LoginPayload;
+  if (contentType.includes("application/json")) {
+    data = await c.req.json();
+  } else {
+    data = await c.req.parseBody<LoginPayload>();
+  }
 
-    const hashedPassword: string = sha256(data.password);
+  const { email, password, origin = "/", location } = data;
 
-    const userResult = await db.select().from(users).where(
-        and(
-            eq(users.email, data.email), 
-            eq(users.password, hashedPassword)
-        )
-    ).execute();
+  // バリデーション
+  if (!email || !password) {
+    return location
+      ? c.redirect(`${origin}?error=invalid_parameter`)
+      : c.json({ success: false, message: "Invalid parameters." }, { status: 400 });
+  }
 
-    if (userResult.length === 0) {
-        if (data.location) {
-            return c.redirect(`${data.origin}?error=user-not-found`);
-        }
-        return c.json({ success: false, message: "User not found. The password may be incorrect, or the user may not exist." })
-    }
+  const hashedPassword = sha256(password);
 
-    const token = await registSession(db, data.email);
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(and(eq(users.email, email), eq(users.password, hashedPassword)))
+    .execute();
 
-    if (!token) {
-        if (data.location) {
-            return c.redirect(`${data.origin}?error=failed-to-create-session`);
-        }
-        return c.json({ success: false, message: "Failed to create a session." })
-    }
+  if (!user) {
+    return location
+      ? c.redirect(`${origin}?error=user_not_found`)
+      : c.json({ success: false, message: "User not found or password incorrect." }, { status: 401 });
+  }
 
-    if (data.location) {
-        setCookie(c, 's-token', token, {
-            path: '/',
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-            maxAge: 60 * 60 * 24 * 7, // 604800秒 -> 7日 -> 一週間
-        });
+  const token = await registSession(db, email);
 
-        return c.redirect(data.location);
-    }
-    
-    return c.json({ success: true, message: "Login successful.", data: { token } });
+  if (!token) {
+    return location
+      ? c.redirect(`${origin}?error=session_creation_failed`)
+      : c.json({ success: false, message: "Failed to create session." }, { status: 500 });
+  }
+
+  setCookie(c, "s-token", token, {
+    path: "/",
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict",
+    maxAge: 60 * 60 * 24 * 7, // 7日
+  });
+
+  return location
+    ? c.redirect(location)
+    : c.json({ success: true, message: "Login successful.", data: { token } });
 }
 
 export { loginHandler };
