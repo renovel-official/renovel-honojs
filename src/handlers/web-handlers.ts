@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import Env from "@/interfaces/utils/env";
 import RootHandler from "./web/root";
-import LoginHandler from "./web/login/login";
+import LoginHandler from "./web/login";
 
 export default ((app: Hono<Env>) => {
     // Webルーティング
