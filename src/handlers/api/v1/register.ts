@@ -34,7 +34,7 @@ async function registerHandler(c: Context<Env>) {
     }
     
     const db: DrizzleD1Database = c.get('db');
-    const user = await registUser(db, data.name, data.email, data.slug, data.password);
+    const user = await registUser(db, data.email, data.name, data.slug, data.password);
 
     if (!user) {
         if (data.location) {
