@@ -41,7 +41,7 @@ export default async function placeholderHandler(c: Context<Env>) {
     `;
 
   return c.text(svg, 200, {
-    'Content-Type': 'image/svg+xml',
+    'content-type': 'image/svg+xml',
     'Cache-Control': 'no-cache',
   })
 }

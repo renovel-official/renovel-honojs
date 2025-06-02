@@ -8,23 +8,31 @@ interface registerPayload {
     slug: string;
     email: string;
     password: string;
+    password_confirmation: string;
     location?: string;
     origin?: string;
 }
 
 async function registerHandler(c: Context<Env>) {
-    const contentType: string = c.req.header()['Content-Type'];
+    const contentType: string = c.req.header()['content-type'];
     const data: registerPayload = contentType.includes('json') ? 
         await c.req.json() :
         await c.req.parseBody();
 
-    if (! (data.name && data.slug && data.email && data.password)) {
+    if (! (data.name && data.slug && data.email && data.password && data.password_confirmation)) {
         if (data.location) {
             return c.redirect(`${data.origin}?error=invalid_parameter`);
         }
         return c.json({ success: false, message: "The parameter invalied" }, { status: 400 });
     }
 
+    if (data.password !== data.password_confirmation) {
+        if (data.location) {
+            return c.redirect(`${data.origin}?error=password_confirmation_mismatch`);
+        }
+        return c.json({ success: false, message: "The password confirmation mismatch" }, { status: 400 });
+    }
+    
     const db: DrizzleD1Database = c.get('db');
     const user = await registUser(db, data.name, data.slug, data.email, data.password);
 

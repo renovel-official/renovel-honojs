@@ -20,11 +20,12 @@ function Input({ name, type, placeholder }: InputProps) {
 interface SubmitButtonProps {
     children?: any;
     className?: string;
+    disabled?: boolean;
 }
 
-function SubmitButton({ children, className }: SubmitButtonProps) {
+function SubmitButton({ children, className, disabled = false }: SubmitButtonProps) {
     return (
-        <button type="submit" class={`p-2 bg-blue-500 text-white rounded ${className}`}>
+        <button type="submit" class={`p-2 ${disabled ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"} text-white rounded ${className}`} disabled={disabled}>
             {children}
         </button>
     )
