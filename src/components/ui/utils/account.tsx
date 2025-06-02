@@ -22,12 +22,13 @@ interface SubmitButtonProps {
     children?: any;
     className?: string;
     disabled?: boolean;
+    color?: boolean;
     id?: string;
 }
 
-function SubmitButton({ children, className, disabled = false, id }: SubmitButtonProps) {
+function SubmitButton({ children, className, disabled = false, color = false, id }: SubmitButtonProps) {
     return (
-        <button type="submit" class={`p-2 ${disabled ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-600"} text-white rounded ${className}`} disabled={disabled} id={id} >
+        <button type="submit" class={`p-2 ${disabled ? "bg-gray-500" : color ? "" : "bg-blue-500 hover:bg-blue-600"} text-white rounded ${className}`} disabled={disabled} id={id} >
             {children}
         </button>
     )
