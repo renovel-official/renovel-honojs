@@ -16,7 +16,7 @@ interface loginPayload {
 
 async function loginHandler(c: Context<Env>) {
     const db = c.get('db');
-    const contentType: string = c.req.header()['Content-Type'];
+    const contentType: string = c.req.header()['content-type'];
     const data: loginPayload = contentType.includes('json') ? 
         await c.req.json() :
         await c.req.parseBody();
