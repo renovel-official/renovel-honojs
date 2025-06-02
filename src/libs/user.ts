@@ -1,4 +1,5 @@
 import { DrizzleD1Database } from "drizzle-orm/d1";
+import { sha256 } from "@/utils/hash";
 import { users } from "@/db/d1";
 import { eq, or } from "drizzle-orm";
 import User from "@/interfaces/user";
@@ -51,13 +52,15 @@ async function registUser(
 
   if (existing.length !== 0) return false; // Already exists
 
+  const hashedPassword = sha256(password);
+
   const insertResult = await db
     .insert(users)
     .values({
       slug,
       name,
       email,
-      password,
+      password: hashedPassword,
       description: "",
     })
     .execute();

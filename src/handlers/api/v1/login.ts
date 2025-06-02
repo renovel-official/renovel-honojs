@@ -21,7 +21,7 @@ async function loginHandler(c: Context<Env>) {
         await c.req.json() :
         await c.req.parseBody();
 
-    if (! (data.email && data.password)) {
+    if (!(data.email && data.password)) {
         if (data.location) {
             return c.redirect(`${data.origin}?error=invalid_parameter`);
         }

@@ -19,7 +19,7 @@ async function registerHandler(c: Context<Env>) {
         await c.req.json() :
         await c.req.parseBody();
 
-    if (! (data.name && data.slug && data.email && data.password && data.password_confirmation)) {
+    if (!(data.name && data.slug && data.email && data.password && data.password_confirmation)) {
         if (data.location) {
             return c.redirect(`${data.origin}?error=invalid_parameter`);
         }

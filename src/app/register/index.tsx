@@ -45,13 +45,15 @@ export default function Register({ error }: RegisterProps) {
                     </div>
 
                     <div class="mt-5 border-t border-gray-300 flex justify-between items-center">
-                        <Link href="/register">または、新規登録</Link>
-                        <SubmitButton className="w-1/2 mt-5" disabled={false}>ログイン</SubmitButton>
+                        <Link href="/login">または、ログイン</Link>
+                        <SubmitButton className="w-1/2 mt-5" disabled={false} id="register-button">新規登録</SubmitButton>
                     </div>
 
                     <div class="h-10" />
                 </form>
             </div>
+
+
         </main>
     )
 }
