@@ -4,6 +4,7 @@ import { sha256 } from "@/utils/hash";
 import { users } from "@/db/d1";
 import { eq, or } from "drizzle-orm";
 import User from "@/interfaces/user";
+import { NovelAuthor } from "@/interfaces/novel";
 
 /**
  * Get user from email or slug.
@@ -27,6 +28,17 @@ async function getUser(
 
   if (result.length === 0) return null;
   return result[0] as unknown as User;
+}
+
+async function getUsers(db: DrizzleD1Database): Promise<Array<NovelAuthor>> {
+  return await db
+    .select({
+      slug: users.slug,
+      name: users.name,
+      description: users.description,
+    })
+    .from(users)
+    .execute();
 }
 
 /**
@@ -98,4 +110,4 @@ async function updateUser(
   return updateResult.success;
 }
 
-export { getUser, registUser, updateUser };
+export { getUser, getUsers, registUser, updateUser };

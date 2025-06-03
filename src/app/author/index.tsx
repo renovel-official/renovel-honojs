@@ -1,3 +1,4 @@
+import InfoBox from "@/components/ui/author/info-box";
 import User from "@/interfaces/user";
 
 interface AuthorProps {
@@ -9,7 +10,7 @@ export default function Author({ author }: AuthorProps) {
         <main>
             <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">
-                    おかえりなさい、{ author?.name }さん
+                    おかえりなさい、{ author?.name ?? "unknown" }さん
                 </h1>
                 <p class="text-gray-600">
                     今日も素晴らしい作品を世界に届けましょう！
@@ -17,53 +18,10 @@ export default function Author({ author }: AuthorProps) {
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="bg-blue-100 p-3 rounded-full">
-                            <i class="fas fa-book text-blue-600 text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-2xl font-bold text-gray-800">12</h3>
-                            <p class="text-gray-600 text-sm">投稿作品数</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="bg-green-100 p-3 rounded-full">
-                            <i class="fas fa-eye text-green-600 text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-2xl font-bold text-gray-800">45,623</h3>
-                            <p class="text-gray-600 text-sm">総閲覧数</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="bg-purple-100 p-3 rounded-full">
-                            <i class="fas fa-users text-purple-600 text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-2xl font-bold text-gray-800">156</h3>
-                            <p class="text-gray-600 text-sm">フォロワー数</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <div class="flex items-center">
-                        <div class="bg-orange-100 p-3 rounded-full">
-                            <i class="fas fa-comments text-orange-600 text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-2xl font-bold text-gray-800">89</h3>
-                            <p class="text-gray-600 text-sm">コメント数</p>
-                        </div>
-                    </div>
-                </div>
+                <InfoBox name="投稿作品数" value={"12"} color="blue"/>
+                <InfoBox name="総閲覧数" value={"45,623"} color="green"/>
+                <InfoBox name="フォロワー数" value={"156"} color="purple"/>
+                <InfoBox name="コメント数" value={"89"} color="orange"/>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">

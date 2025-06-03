@@ -1,16 +1,16 @@
 import { Hono } from "hono";
-import RegisterHandler from "./web/register";
-import AuthorHandler from "./web/author";
-import LoginHandler from "./web/login";
-import RootHandler from "./web/root";
+import registerHandler from "./web/register";
+import authorHandler from "./web/author";
+import loginHandler from "./web/login";
+import rootHandler from "./web/root";
 import Env from "@/interfaces/utils/env";
 
 export default ((app: Hono<Env>) => {
     // Webルーティング
-    app.get('/', RootHandler);
+    app.get('/', rootHandler);
 
-    app.get('/login', LoginHandler);
-    app.get('/register', RegisterHandler);
+    app.get('/login', loginHandler);
+    app.get('/register', registerHandler);
 
     app.get('/works/:workId', );
     app.get('/works/:workId/episodes/:episodeId',);
@@ -23,7 +23,7 @@ export default ((app: Hono<Env>) => {
     app.get('/users/:userId/following-users',);
     app.get('/users/:userId/following-works',);
 
-    app.get('/author', AuthorHandler);
+    app.get('/author', authorHandler);
 
     app.get('/author/works',);
     app.get('/author/works/new',);

@@ -2,7 +2,7 @@ import { Context } from "hono";
 import Login from "@/app/login";
 import Env from "@/interfaces/utils/env";
 
-export default async function LoginHandler(c: Context<Env>) {
+export default async function loginHandler(c: Context<Env>) {
     const error = c.req.query('error');
     c.set('title', 'ログイン | ReNovel')
 

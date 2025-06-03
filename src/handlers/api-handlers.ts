@@ -10,19 +10,32 @@ export default ((app: Hono<Env>) => {
     app.post('/api/v1/login', loginHandler);
     app.post('/api/v1/register', registerHandler);
     app.get('/api/v1/logout', logoutHandler);
+
+    // 作者関連api
+    app.get('/api/v2/authors', )
+    app.get('/api/v2/authors/', )
     
     // 作品関連api
-    app.get('/api/v2/works', );
-    app.get('/api/v2/works/:workId', );
-    app.get('/api/v2/works/:workId/good', )
-    app.get('/api/v2/works/:workId/episodes/:episodeId', );
-    app.get('/api/v2/works/:workId/episodes/:episodeId/good', );
-    app.get('/api/v2/works/:workId/episodes/:episodeId/comments', );
-    app.get('/api/v2/works/:workId/episodes/:episodeId/comments/:commentId', );
+    app.get('/api/v3/works', );
+    app.post('/api/v3/works', );
+
+    app.get('/api/v3/works/:workId', );
+    app.put('/api/v3/works/:workId', );
+
+    app.get('/api/v3/works/:workId/authors', );
+    app.post('/api/v3/works/:workId/authors', );
+    app.delete('/api/v3/works/:workId/authors', );
+
+    app.get('/api/v3/works/:workId/good', );
+
+    app.get('/api/v3/works/:workId/episodes/:episodeId', );
+    app.get('/api/v3/works/:workId/episodes/:episodeId/good', );
+    app.get('/api/v3/works/:workId/episodes/:episodeId/comments', );
+    app.get('/api/v3/works/:workId/episodes/:episodeId/comments/:commentId', );
     
-    app.get('/api/v3/search', );
-    app.get('/api/v3/ranking', );
-    app.get('/api/v3/blog', );
+    app.get('/api/v4/search', );
+    app.get('/api/v4/ranking', );
+    app.get('/api/v4/blog', );
     
     app.get('/api/utils/placeholder/:workId', placeholderHandler);
     

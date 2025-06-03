@@ -22,7 +22,7 @@ interface Novel {
 
 interface NovelAuthor {
     id?: number;
-    email: string;
+    slug: string;
     novel_id: string;
     is_admin: boolean;
     created_at: string;

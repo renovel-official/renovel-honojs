@@ -11,6 +11,7 @@ interface LoginPayload {
   password: string;
   origin?: string;
   location?: string;
+  [key: string]: any;
 }
 
 async function loginHandler(c: Context<Env>) {

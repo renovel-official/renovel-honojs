@@ -11,4 +11,16 @@ interface Episode {
     updated_at: string;
 }
 
-export default Episode;
+interface EpisodeComment {
+    id?: number;
+    comment_id: string;
+    author_id: string;
+    work_id: string;
+    episode_id: string;
+
+    text: string;
+
+    created_at: number;
+}
+
+export { Episode, EpisodeComment };
