@@ -1,4 +1,5 @@
 import { DrizzleD1Database } from 'drizzle-orm/d1';
+import { AuthorLayout } from './app/author/layout';
 import { MainLayout } from './app/layout';
 import { drizzle } from 'drizzle-orm/d1';
 import { Hono } from 'hono';
@@ -21,6 +22,7 @@ app.use('/api/*', RateLimit({
 }));
 app.use('/*', Middleware);
 app.use('/*', MainLayout);
+app.use('/author/*', AuthorLayout);
 
 WebRouter(app);
 ApiRouter(app);

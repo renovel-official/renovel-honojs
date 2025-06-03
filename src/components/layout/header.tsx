@@ -26,17 +26,15 @@ export default function Header({ login = false }: HeaderProps) {
                     <div class="flex items-center space-x-3">
                         { login ? (
                             <>
-                                <a href="/author/works" class="text-center bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300">
+                                <a href="/author/works" class="text-gray-700 hover:text-gray-900 transition duration-300">
                                     作品一覧
                                 </a>
-                                <a href="/login" class="text-gray-700 hover:text-gray-900 transition duration-300">
-                                    <i class="fas fa-user"></i>
-                                    dashboard
+                                <a href="/author" class="text-center bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300">
+                                    ダッシュボード
                                 </a>
                             </>
                         ) : (
                             <a href="/login" class="text-gray-700 hover:text-gray-900 transition duration-300">
-                                <i class="fas fa-user"></i>
                                 ログイン
                             </a>
                         ) }

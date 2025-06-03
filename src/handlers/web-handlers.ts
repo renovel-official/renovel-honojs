@@ -1,8 +1,9 @@
 import { Hono } from "hono";
-import Env from "@/interfaces/utils/env";
-import RootHandler from "./web/root";
-import LoginHandler from "./web/login";
 import RegisterHandler from "./web/register";
+import AuthorHandler from "./web/author";
+import LoginHandler from "./web/login";
+import RootHandler from "./web/root";
+import Env from "@/interfaces/utils/env";
 
 export default ((app: Hono<Env>) => {
     // Webルーティング
@@ -22,7 +23,7 @@ export default ((app: Hono<Env>) => {
     app.get('/users/:userId/following-users',);
     app.get('/users/:userId/following-works',);
 
-    app.get('/author',);
+    app.get('/author', AuthorHandler);
 
     app.get('/author/works',);
     app.get('/author/works/new',);

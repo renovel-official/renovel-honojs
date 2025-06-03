@@ -1,6 +1,6 @@
 import { DrizzleD1Database } from "drizzle-orm/d1";
 import { D1Database } from "@cloudflare/workers-types";
-import Session from "@/interfaces/session";
+import User from "../user";
 
 type Env = {
     Bindings: {
@@ -8,7 +8,7 @@ type Env = {
     };
     Variables: {
         db: DrizzleD1Database;
-        session?: Session | null;
+        user?: User | null;
         title?: string;
     }
 };
