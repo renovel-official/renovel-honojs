@@ -15,7 +15,7 @@ app.use('/*', async (c, next) => {
 
   return await next();
 });
-app.use('*', RateLimit({
+app.use('/api/*', RateLimit({
   windowMs: 60 * 1000, // 1分
   limit: 40,
 }));
