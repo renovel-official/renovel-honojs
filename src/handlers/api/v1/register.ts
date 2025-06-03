@@ -16,8 +16,8 @@ interface registerPayload {
 async function registerHandler(c: Context<Env>) {
     const contentType: string = c.req.header()['content-type'];
     const data: registerPayload = contentType.includes('json') ? 
-        await c.req.json() :
-        await c.req.parseBody();
+        (await c.req.json()) as registerPayload :
+        (await c.req.parseBody()) as unknown as registerPayload;
 
     if (!(data.name && data.slug && data.email && data.password && data.password_confirmation)) {
         if (data.location) {

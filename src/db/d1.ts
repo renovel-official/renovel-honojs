@@ -9,7 +9,7 @@ export const users = sqliteTable('users', {
   password: text('password'),
   description: text('description'),
   google_client_id: text('google_client_id'),
-  created_at: integer('created_at'),
+  created_at: text('created_at'),
   role: text('role').default('user'),
 });
 

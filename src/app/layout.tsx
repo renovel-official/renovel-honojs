@@ -11,13 +11,14 @@ export const MainLayout = jsxRenderer(async ({ children }, c: Context<Env>) => {
   const token = getCookie(c, 's-token') ?? "";
   const session = await getSession(db, token);
   const login = session ? true : false;
+  const title = c.get('title') || "ReNovel | 学生運営の小説投稿サイト";
 
   return (
     <html>
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>ReNovel - 小説投稿サイト</title>
+        <title>{ title }</title>
         <meta property="og:title" content="ReNovel - 小説投稿サイト" />
         <meta property="og:description" content="あなたの小説を世界に発信しよう" />
         <meta property="og:image" content="/renovel-logo.png" />

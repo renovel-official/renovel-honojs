@@ -4,6 +4,7 @@ import Env from "@/interfaces/utils/env";
 
 export default async function RegisterHandler(c: Context<Env>) {
     const error = c.req.query('error');
+    c.set('title', '新規登録 | ReNovel')
 
     return c.render(<Register error={error} />);
 }

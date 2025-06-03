@@ -1,3 +1,4 @@
+import { getUnixTimestamp, unixToJSTDate, formatJST } from "@/utils/timestamp";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 import { sha256 } from "@/utils/hash";
 import { users } from "@/db/d1";
@@ -62,6 +63,7 @@ async function registUser(
       email,
       password: hashedPassword,
       description: "",
+      created_at: formatJST(getUnixTimestamp()),
     })
     .execute();
 

@@ -9,6 +9,7 @@ type Env = {
     Variables: {
         db: DrizzleD1Database;
         session?: Session | null;
+        title?: string;
     }
 };
 
