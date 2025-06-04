@@ -16,6 +16,15 @@ app.use('/*', async (c, next) => {
 
   return await next();
 });
+app.use('*', async (c, next) => {
+  c.set('meta', {
+    title: 'ReNovel | 学生運営の小説投稿サイト',
+    description: 'ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。',
+    image: 'https://v2.renovel.jp/renovel_ogp.png'
+  });
+
+  return await next();
+});
 app.use('/api/*', RateLimit({
   windowMs: 60 * 1000, // 1分
   limit: 40,

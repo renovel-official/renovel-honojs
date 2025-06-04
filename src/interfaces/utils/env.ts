@@ -9,7 +9,7 @@ type Env = {
     Variables: {
         db: DrizzleD1Database;
         user?: User | null;
-        meta: {
+        meta?: {
             title?: string;
             description?: string;
             image?: string;
