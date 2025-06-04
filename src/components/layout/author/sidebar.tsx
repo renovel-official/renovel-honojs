@@ -1,6 +1,6 @@
 export default function Sidebar() {
     return (
-        <div class="w-1/5 p-5 bg-white mt-6 ml-4 mb-6 rounded-md">
+        <div class="p-5 bg-white mt-6 ml-4 mb-6 rounded-md" id="sidebar">
             <nav class="space-y-4">
                 <a href="/author" class="flex items-center p-3 rounded-lg bg-gray-800 text-white">
                     <i class="fas fa-tachometer-alt mr-3"></i>
@@ -27,6 +27,8 @@ export default function Sidebar() {
                     設定
                 </a>
             </nav>
+
+            <script src="/assets/service/author/sidebar.js"></script>
         </div>
     );
 }

@@ -53,7 +53,7 @@ export default function Register({ error }: RegisterProps) {
                 </form>
             </div>
 
-            <script src="/assets/register/main.js"></script>
+            <script src="/assets/service/register/main.js"></script>
         </main>
     )
 }

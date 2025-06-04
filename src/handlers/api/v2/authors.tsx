@@ -12,8 +12,10 @@ async function authorsHandler(c: Context<Env>) {
         if (limit === 0) {
             return c.json({ success: true, message: 'Success to get all users', data: { users } })
         } else {
-            return c.json({ success: true, message: 'Success' })
+            return c.json({ success: true, message: 'Success' });
         }
+    } catch (e) {
+        return c.json({ success: false, message: "Internal Error", data: e }, { status: 400 });
     }
     
 }

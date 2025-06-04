@@ -38,7 +38,7 @@ async function getUsers(db: DrizzleD1Database): Promise<Array<NovelAuthor>> {
       description: users.description,
     })
     .from(users)
-    .execute();
+    .execute() as unknown as Array<NovelAuthor>;
 }
 
 /**

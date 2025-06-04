@@ -6,7 +6,7 @@ console.log(termAgreeCheckbox, submitButton);
 addEventListener('DOMContentLoaded', () => {
     submitButton.classList.add('bg-gray-500');
     submitButton.disabled = true;
-})
+});
 
 termAgreeCheckbox.addEventListener('change', () => {
     if (termAgreeCheckbox.checked) {

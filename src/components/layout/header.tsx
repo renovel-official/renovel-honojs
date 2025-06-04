@@ -6,7 +6,7 @@ interface HeaderProps {
 
 export default function Header({ login = false }: HeaderProps) {
     return (
-        <header class="bg-white shadow-md">
+        <header class="bg-white shadow-md" id='header'>
             <div class="container mx-auto px-4 py-3">
                 <div class="flex items-center justify-between">
                     <a href="/">
