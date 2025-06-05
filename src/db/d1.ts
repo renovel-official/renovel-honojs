@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 
 // usersテーブル
-export const users = sqliteTable('users', {
+const users = sqliteTable('users', {
   id: integer('id').primaryKey(),
   slug: text('slug').notNull(),
   name: text('name'),
@@ -14,7 +14,7 @@ export const users = sqliteTable('users', {
 });
 
 // author_novelsテーブル
-export const authorNovels = sqliteTable('author_novels', {
+const authorNovels = sqliteTable('author_novels', {
   id: integer('id').primaryKey(),
   email: text('email'),
   novel_id: text('novel_id'),
@@ -23,7 +23,7 @@ export const authorNovels = sqliteTable('author_novels', {
 });
 
 // episodesテーブル
-export const episodes = sqliteTable('episodes', {
+const episodes = sqliteTable('episodes', {
   id: integer('id').primaryKey(),
   novel_id: text('novel_id').notNull(),
   slug: text('slug').notNull(),
@@ -37,7 +37,7 @@ export const episodes = sqliteTable('episodes', {
 });
 
 // follow_novelsテーブル
-export const followNovels = sqliteTable('follow_novels', {
+const followNovels = sqliteTable('follow_novels', {
   id: integer('id').primaryKey(),
   author_id: text('author_id').notNull(),
   novel_id: text('novel_id').notNull(),
@@ -45,7 +45,7 @@ export const followNovels = sqliteTable('follow_novels', {
 });
 
 // follow_usersテーブル
-export const followUsers = sqliteTable('follow_users', {
+const followUsers = sqliteTable('follow_users', {
   id: integer('id').primaryKey(),
   author_id: text('author_id').notNull(),
   user_id: text('user_id').notNull(),
@@ -53,7 +53,7 @@ export const followUsers = sqliteTable('follow_users', {
 });
 
 // novelsテーブル
-export const novels = sqliteTable('novels', {
+const novels = sqliteTable('novels', {
   id: integer('id').primaryKey(),
   slug: text('slug').notNull(),
   type: text('type').notNull(),
@@ -70,7 +70,7 @@ export const novels = sqliteTable('novels', {
 });
 
 // point_userテーブル
-export const pointUser = sqliteTable('point_user', {
+const pointUser = sqliteTable('point_user', {
   id: integer('id').primaryKey(),
   email: text('email'),
   novel_id: text('novel_id'),
@@ -79,10 +79,51 @@ export const pointUser = sqliteTable('point_user', {
 });
 
 // sessionsテーブル
-export const sessions = sqliteTable('sessions', {
+const sessions = sqliteTable('sessions', {
   id: integer('id').primaryKey(),
   token: text('token'),
   email: text('email'),
   created_at: text('created_at'),
   last_logined_at: integer('last_logined_at')
 });
+
+// messagesテーブル
+const messages = sqliteTable('messages', {
+  id: integer('id').primaryKey(),
+  room_id: text('room_id'),
+  slug: text('slug'),
+  author_id: text('author_id'),
+  text: text('text'),
+  created_at: text('created_at'),
+});
+
+// roomsテーブル
+const rooms = sqliteTable('rooms', {
+  id: integer('id').primaryKey(),
+  slug: text('slug'),
+  title: text('title'),
+  created_at: text('created_at'),
+});
+
+// room_usersテーブル
+const roomUsers = sqliteTable('room_users', {
+  id: integer('id').primaryKey(),
+  room_id: text('room_id'),
+  user_id: text('user_id'),
+  is_admin: integer('is_admin'),
+  created_at: text('created_at'),
+});
+
+export { 
+  users, 
+  authorNovels, 
+  episodes, 
+  followNovels, 
+  followUsers, 
+  novels, 
+  pointUser, 
+  sessions, 
+  messages, 
+  rooms, 
+  roomUsers 
+};

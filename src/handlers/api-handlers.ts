@@ -32,10 +32,13 @@ export default ((app: Hono<Env>) => {
     app.get('/api/v3/works/:workId/episodes/:episodeId/good', );
     app.get('/api/v3/works/:workId/episodes/:episodeId/comments', );
     app.get('/api/v3/works/:workId/episodes/:episodeId/comments/:commentId', );
+
+    app.get('/api/v4/messages', );
+    app.post('/api/v4/messages/:roomId', );
     
-    app.get('/api/v4/search', );
-    app.get('/api/v4/ranking', );
-    app.get('/api/v4/blog', );
+    app.get('/api/v5/search', );
+    app.get('/api/v5/ranking', );
+    app.get('/api/v5/blog', );
     
     app.get('/api/utils/placeholder/:workId', placeholderHandler);
     

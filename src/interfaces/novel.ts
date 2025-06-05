@@ -1,6 +1,6 @@
 import NovelGenre from "@/types/genre";
 import NovelType from "@/types/novel";
-import Episode from "./episode";
+import { Episode } from "./episode";
 
 interface Novel {
     id?: number;

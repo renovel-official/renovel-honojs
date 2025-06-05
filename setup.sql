@@ -88,3 +88,27 @@ CREATE TABLE sessions (
   created_at TEXT DEFAULT (datetime('now')),
   last_logined_at INTEGER
 );
+
+CREATE TABLE messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  room_id TEXT,
+  slug TEXT,
+  author_id TEXT,
+  text TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE rooms (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT,
+  title TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE room_users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  room_id TEXT,
+  user_id TEXT,
+  is_admin INTEGER, -- booleanはSQLiteではINTEGERで0/1を使う
+  created_at TEXT DEFAULT (datetime('now'))
+);
