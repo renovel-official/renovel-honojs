@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { loginHandler } from "./api/v1/login";
 import { logoutHandler } from "./api/v1/logout";
+import { sessionHandler } from "./api/v1/session";
 import { registerHandler } from "./api/v1/register";
 import placeholderHandler from "./api/utils/placeholder";
 import Env from "@/interfaces/utils/env";
@@ -10,6 +11,8 @@ export default ((app: Hono<Env>) => {
     app.post('/api/v1/login', loginHandler);
     app.post('/api/v1/register', registerHandler);
     app.get('/api/v1/logout', logoutHandler);
+    app.get('/api/v1/session', sessionHandler);
+    
 
     // 作者関連api
     app.get('/api/v2/authors', )

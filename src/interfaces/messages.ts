@@ -22,4 +22,10 @@ interface RoomUser {
     created_at: string;
 }
 
-export type { Message, Room, RoomUser };
+interface RoomResult {
+    room: Room;
+    users: Array<RoomUser>;
+    messages: Array<Message>;
+}
+
+export type { Message, Room, RoomUser, RoomResult };
