@@ -32,6 +32,20 @@ async function registerHandler(c: Context<Env>) {
         }
         return c.json({ success: false, message: "The password confirmation mismatch" }, { status: 400 });
     }
+
+    if (!data.email.includes('@')) {
+        if (data.location) {
+            return c.redirect(`${data.origin}?error=invalid_email`);
+        }
+        return c.json({ success: false, message: "The email is invalid" }, { status: 400 });
+    }
+
+    if (!data.slug.match(/^[a-z0-9]+$/)) {
+        if (data.location) {
+            return c.redirect(`${data.origin}?error=invalid_slug`);
+        }
+        return c.json({ success: false, message: "The slug is invalid" }, { status: 400 });
+    }
     
     const db: DrizzleD1Database = c.get('db');
     const user = await registUser(db, data.email, data.name, data.slug, data.password);
