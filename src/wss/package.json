@@ -1,0 +1,15 @@
+{
+  "name": "renovel-wss",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node ./index.js"
+  },
+  "author": "tanahiro2010",
+  "license": "ISC",
+  "description": "ReNovel WebSocket Server",
+  "dependencies": {
+    "http": "^0.0.1-security",
+    "ws": "^8.18.2"
+  }
+}
