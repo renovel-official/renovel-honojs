@@ -17,6 +17,23 @@ async function getRooms(db: DrizzleD1Database, userId: string): Promise<Array<Ro
     }));
 }
 
+async function getRoom(db: DrizzleD1Database, roomId: string): Promise<Room | null> {
+    const getResult = await db.select().from(rooms).where(eq(rooms.slug, roomId)).execute();
+
+    if (getResult.length === 0) {
+        return null;
+    }
+
+    const room = getResult[0];
+
+    return {
+        id: room.id,
+        slug: room.slug ?? "",
+        title: room.title ?? "",
+        created_at: room.created_at ?? "",
+    }
+}
+
 async function getRoomUsers(db: DrizzleD1Database, roomId: string): Promise<Array<RoomUser>> {
     const getResult = await db.select().from(roomUsers).where(eq(roomUsers.room_id, roomId)).execute();
 
@@ -29,9 +46,31 @@ async function getRoomUsers(db: DrizzleD1Database, roomId: string): Promise<Arra
     }));
 }
 
-async function getRoom(db: DrizzleD1Database, roomId: string): Promise<RoomResult> {
-    const roomResult = await db.select().from(rooms).where(eq(rooms.slug, roomId)).execute();
-    const roomUsersResult = await db.select().from(roomUsers).where(eq(roomUsers.room_id, roomResult[0].id)).execute();
+async function getRoomMessages(db: DrizzleD1Database, roomId: string): Promise<Array<Message>> {
+    const roomResult = await getRoom(db, roomId);
+
+    if (!roomResult) {
+        
+    }
+
+    return [];
 }
 
-export { getRooms };
+
+async function getRoomDetails(db: DrizzleD1Database, roomId: string): Promise<RoomResult | null> {
+    const roomResult = await getRoom(db, roomId);
+
+    if (!roomResult) {
+        return null;
+    }
+
+
+    const roomUsersResult = await getRoomUsers(db, roomId);
+
+    return {
+        room: roomResult,
+        users: roomUsersResult,
+    }
+}
+
+export { getRooms, getRoomUsers };

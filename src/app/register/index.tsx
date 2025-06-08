@@ -36,7 +36,7 @@ export default function Register({ error }: RegisterProps) {
                         <Input name="password" type="password" placeholder="パスワード" />
                         <Input name="password_confirmation" type="password" placeholder="パスワード確認" />
                         <Input name="name" type="text" placeholder="名前" />
-                        <Input name="slug" type="text" placeholder="ユーザー名" />
+                        <Input name="slug" type="text" placeholder="ユーザーID" />
                     </div>
 
                     <div className="mt-2 flex items-center justify-center">

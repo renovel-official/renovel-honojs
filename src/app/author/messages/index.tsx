@@ -4,7 +4,7 @@ interface AuthorMessagesProps {
     rooms: Array<Room>;
 }
 
-export default function AuthorMessages() {
+export default function AuthorMessages({ rooms }: AuthorMessagesProps) {
     return (
         <div>
             
