@@ -1,31 +1,16 @@
+import SidebarOption from "@/components/ui/author/sidebar-option";
+
 export default function Sidebar() {
     return (
         <div class="p-5 bg-white mt-6 ml-4 mb-6 rounded-md" id="sidebar">
             <nav class="space-y-4">
-                <a href="/author" class="flex items-center p-3 rounded-lg bg-gray-800 text-white">
-                    <i class="fas fa-tachometer-alt mr-3"></i>
-                    ダッシュボード
-                </a>
-                <a href="/author/works" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
-                    <i class="fas fa-book mr-3"></i>
-                    作品管理
-                </a>
-                <a href="/author/blogs" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
-                    <i class="fas fa-blog mr-3"></i>
-                    ブログ管理
-                </a>
-                <a href="/author/messages" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
-                    <i class="fas fa-envelope mr-3"></i>
-                    メッセージ
-                </a>
-                <a href="/author/following-users" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
-                    <i class="fas fa-users mr-3"></i>
-                    フォロー管理
-                </a>
-                <a href="/author/setting" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
-                    <i class="fas fa-cog mr-3"></i>
-                    設定
-                </a>
+                <SidebarOption href="/author" icon="fa-tachometer-alt" text="ダッシュボード" /> 
+                <SidebarOption href="/author/works" icon="fa-book" text="作品管理" />
+                <SidebarOption href="/author/blogs" icon="fa-blog" text="ブログ管理" />
+                <SidebarOption href="/author/messages" icon="fa-envelope" text="メッセージ" />
+                <SidebarOption href="/author/following-users" icon="fa-users" text="フォロー管理" />
+                <SidebarOption href="/author/setting" icon="fa-cog" text="設定" />
+                <SidebarOption href="/api/v1/logout?location=/" icon="fa-sign-out-alt" text="ログアウト" color="red" />
             </nav>
 
             <script src="/assets/service/author/sidebar.js"></script>

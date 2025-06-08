@@ -40,6 +40,8 @@ async function registerHandler(c: Context<Env>) {
         return c.json({ success: false, message: "The email is invalid" }, { status: 400 });
     }
 
+    console.log(data.slug);
+
     if (!data.slug.match(/^[a-z0-9]+$/)) {
         if (data.location) {
             return c.redirect(`${data.origin}?error=invalid_slug`);
