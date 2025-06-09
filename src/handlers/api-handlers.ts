@@ -16,7 +16,7 @@ export default ((app: Hono<Env>) => {
 
     // 作者関連api
     app.get('/api/v2/authors', )
-    app.get('/api/v2/authors/', )
+    app.get('/api/v2/authors/:userId', )
     
     // 作品関連api
     app.get('/api/v3/works', );
