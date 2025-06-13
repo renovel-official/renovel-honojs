@@ -5,6 +5,7 @@ import { authorHandler } from "./api/v2/[slug]/author";
 import { sessionHandler } from "./api/v1/session";
 import { authorsHandler } from "./api/v2/authors";
 import { registerHandler } from "./api/v1/register";
+import { createRoomHandler } from "./api/v4/create";
 import placeholderHandler from "./api/utils/placeholder";
 import Env from "@/interfaces/utils/env";
 
@@ -38,7 +39,7 @@ export default ((app: Hono<Env>) => {
     app.get('/api/v3/works/:workId/episodes/:episodeId/comments', );
     app.get('/api/v3/works/:workId/episodes/:episodeId/comments/:commentId', );
 
-    app.post('/api/v4/messages', );
+    app.post('/api/v4/messages', createRoomHandler);
     app.get('/api/v4/messages/:roomId', );
     app.post('/api/v4/messages/:roomId', );
     

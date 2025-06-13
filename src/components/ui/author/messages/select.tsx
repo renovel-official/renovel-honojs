@@ -6,7 +6,7 @@ interface MessageSelectProps {
 
 export default function MessageSelect({ roomDetails }: MessageSelectProps) {
     const { room, messages } = roomDetails;
-    const lastMessage = messages[messages.length - 1];
+    const lastMessage = messages[messages.length - 1] ?? { text: "メッセージ未受信", created_at: room.created_at };
 
     return (
         <a href={`/author/messages/${room.slug}`}>

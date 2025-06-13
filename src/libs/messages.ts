@@ -1,10 +1,8 @@
 import { rooms, roomUsers, messages } from "@/db/d1";
 import { Message, Room, RoomUser, RoomResult } from "@/interfaces/messages";
 import { DrizzleD1Database } from "drizzle-orm/d1";
-import { getUser } from "./user";
-import { Context } from "hono";
+import { bin2hex } from "@/utils/bin2hex";
 import { eq, asc } from "drizzle-orm";
-import Env from "@/interfaces/utils/env";
 
 async function getRooms(db: DrizzleD1Database, userId: string): Promise<Array<RoomResult>> {
     const getResult = await db.select().from(roomUsers).orderBy(asc(roomUsers.id)).where(eq(roomUsers.user_id, userId)).execute();
@@ -77,7 +75,6 @@ async function getRoomDetails(db: DrizzleD1Database, roomId: string): Promise<Ro
         return null;
     }
 
-
     const users = await getRoomUsers(db, roomId);
     const messages = await getRoomMessages(db, roomId);
 
@@ -88,4 +85,57 @@ async function getRoomDetails(db: DrizzleD1Database, roomId: string): Promise<Ro
     }
 }
 
-export { getRooms, getRoomUsers };
+async function createRoom(db: DrizzleD1Database, adminId: string, users: string[], title: string): Promise<RoomResult | null> {
+    const roomId: string = bin2hex(16);
+    const insertedUsers: string[] = [];
+
+    const room = await db.insert(rooms).values({
+        slug: roomId,
+        title: title,
+        created_at: new Date().toISOString(),
+    }).returning().execute();
+
+    if (room.length === 0) {
+        return null;
+    }
+
+    const membersInsertData = users.map((userId) => {
+        if (!insertedUsers.includes(userId)) {
+            insertedUsers.push(userId);
+
+            return {
+                room_id: roomId,
+                user_id: userId,
+                is_admin: userId === adminId ? 1 : 0,
+                created_at: new Date().toISOString(),
+            }
+        }
+
+        return null;
+    }).filter((data) => data !== null);
+
+    const result = await db.insert(roomUsers).values(membersInsertData).returning().execute();
+
+    if (result.length === 0) {
+        return null;
+    }
+
+    return {
+        room: {
+            id: room[0].id,
+            slug: roomId,
+            title: title,
+            created_at: new Date().toISOString(),
+        },
+        users: result.map((roomUser) => ({
+            id: roomUser.id,
+            room_id: roomUser.room_id ?? "",
+            user_id: roomUser.user_id ?? "",
+            is_admin: roomUser.is_admin ? true : false,
+            created_at: roomUser.created_at ?? "",
+        })),
+        messages: [],
+    }
+}
+
+export { getRooms, getRoomUsers, getRoomDetails, getRoomMessages, createRoom };

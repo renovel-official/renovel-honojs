@@ -12,6 +12,7 @@ export default async function authorMessagesHandler(c: Context<Env>) {
     }
 
     const rooms = await getRooms(db, user.slug);
+    console.log(rooms);
 
     return c.render(<AuthorMessages rooms={rooms} />);
 }
