@@ -11,11 +11,15 @@ export default function AuthorMessagesCreate() {
                         メッセージを作成するユーザーのIDを入力してください
                     </div>
 
+                    <div id="user-list" class="mt-5"></div>
+
                     <div class="mt-5 text-center">
                         <input type="text" class="w-1/2 border rounded p-2" placeholder="ユーザーID" id="user-id" />
                     </div>
                 </form>
             </div>
+
+            <script src="/assets/service/author/messages/create.js"></script>
         </main>
     );
 }
