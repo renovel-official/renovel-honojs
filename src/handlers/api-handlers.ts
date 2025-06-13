@@ -1,7 +1,9 @@
 import { Hono } from "hono";
 import { loginHandler } from "./api/v1/login";
 import { logoutHandler } from "./api/v1/logout";
+import { authorHandler } from "./api/v2/[slug]/author";
 import { sessionHandler } from "./api/v1/session";
+import { authorsHandler } from "./api/v2/authors";
 import { registerHandler } from "./api/v1/register";
 import placeholderHandler from "./api/utils/placeholder";
 import Env from "@/interfaces/utils/env";
@@ -15,8 +17,8 @@ export default ((app: Hono<Env>) => {
     
 
     // 作者関連api
-    app.get('/api/v2/authors', )
-    app.get('/api/v2/authors/:userId', )
+    app.get('/api/v2/authors', authorsHandler);
+    app.get('/api/v2/authors/:userId', authorHandler);
     
     // 作品関連api
     app.get('/api/v3/works', );
@@ -36,7 +38,8 @@ export default ((app: Hono<Env>) => {
     app.get('/api/v3/works/:workId/episodes/:episodeId/comments', );
     app.get('/api/v3/works/:workId/episodes/:episodeId/comments/:commentId', );
 
-    app.get('/api/v4/messages', );
+    app.post('/api/v4/messages', );
+    app.get('/api/v4/messages/:roomId', );
     app.post('/api/v4/messages/:roomId', );
     
     app.get('/api/v5/search', );

@@ -19,3 +19,5 @@ async function authorsHandler(c: Context<Env>) {
     }
     
 }
+
+export { authorsHandler };
