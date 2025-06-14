@@ -27,7 +27,7 @@ export const AuthorLayout = jsxRenderer(async ({ children }, c: Context<Env>) =>
                     <Sidebar />
 
                     { /** メイン画面 */}
-                    <div class="w-full container mx-auto px-4 py-6">
+                    <div class="w-full container mx-auto px-4 py-6 h-full">
                         {children}
                     </div>
                 </div>

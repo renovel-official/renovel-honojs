@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import authorMessagesCreateHandler from "./web/author/messages/create";
 import authorMessagesHandler from "./web/author/messages";
+import messageRoomHandler from "./web/author/messages/[roomId]";
 import registerHandler from "./web/register";
 import authorHandler from "./web/author";
 import loginHandler from "./web/login";
@@ -41,7 +42,7 @@ export default ((app: Hono<Env>) => {
 
     app.get('/author/messages', authorMessagesHandler);
     app.get('/author/messages/new', authorMessagesCreateHandler);
-    app.get('/author/messages/:roomId',);
+    app.get('/author/messages/:roomId', messageRoomHandler);
 
     app.get('/author/setting',);
 

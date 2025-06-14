@@ -10,7 +10,7 @@ export class ChatRoom {
   state: DurableObjectState;
   sessions: Map<string, WritableStreamDefaultWriter>;
 
-  constructor(state: DurableObjectState, env: any) {
+  constructor(state: DurableObjectState | any, env: any) {
     this.state = state;
     this.sessions = new Map();
   }

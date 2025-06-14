@@ -7,12 +7,12 @@
     "directory": "./dist"
   },
   "compatibility_flags": ["nodejs_compat_v2"],
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_classes": ["ChatRoom"]
-    }
-  ],
+  // "migrations": [
+  //   {
+  //     "tag": "v1",
+  //     "new_classes": ["ChatRoom"]
+  //   }
+  // ],
   "d1_databases": [
     {
       "binding": "DB",
@@ -20,12 +20,12 @@
       "database_id": "dd655f27-c2eb-4c6d-bce7-bd5b10e99ba1"
     }
   ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "ReNovel-Chat",
-        "class_name": "ChatRoom"
-      }
-    ]
-  }
+  // "durable_objects": {
+  //   "bindings": [
+  //     {
+  //       "name": "ReNovel-Chat",
+  //       "class_name": "ChatRoom"
+  //     }
+  //   ]
+  // }
 }

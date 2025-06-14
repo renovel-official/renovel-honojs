@@ -42,10 +42,23 @@ export default defineConfig(({ command, isSsrBuild }) => {
     }
   }
 
+  // ✅ SSR ビルド時に ChatRoom を削除しないよう設定追加
   return {
     ...common,
     plugins: [
-      build({ outputDir: 'dist-server' })
-    ]
+      build({ 
+        outputDir: 'dist-server'
+      })
+    ],
+    build: {
+      rollupOptions: {
+        treeshake: {
+          moduleSideEffects: (id) => {
+            // durable-objects.ts が含まれる場合は副作用ありと判定して除外を防ぐ
+            return id.includes('durable-objects');
+          }
+        }
+      }
+    }
   }
 })

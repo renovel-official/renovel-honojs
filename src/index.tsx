@@ -11,6 +11,12 @@ import RateLimit from 'hono-rate-limit';
 import Env from './interfaces/utils/env';
 const app = new Hono<Env>();
 
+// Tree shaking 回避のためのダミー利用
+if (Math.random() < 0) {
+  console.log(new ChatRoom(null, null));
+}
+
+
 // 設定
 app.use('/*', async (c, next) => {
   c.set('db', drizzle(c.env.DB) as DrizzleD1Database);
@@ -39,3 +45,4 @@ ApiRouter(app);
 
 export default app;
 export { ChatRoom };
+export const __doNotEliminate = [ChatRoom];
