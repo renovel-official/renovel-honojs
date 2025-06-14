@@ -1,4 +1,5 @@
 import { DrizzleD1Database } from "drizzle-orm/d1";
+import { addUserToRoom } from "@/libs/messages";
 import { registUser } from "@/libs/user";
 import { Context } from "hono";
 import Env from "@/interfaces/utils/env";
@@ -58,6 +59,8 @@ async function registerHandler(c: Context<Env>) {
         }
         return c.json({ success: false, message: "Failed to create a user." }, { status: 400 });
     }
+
+    await addUserToRoom(db, "all_users", data.slug);
 
     if (data.location) {
         return c.redirect(data.location);

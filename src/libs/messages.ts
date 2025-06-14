@@ -147,9 +147,28 @@ async function createRoom(db: DrizzleD1Database, adminId: string, users: string[
     }
 }
 
+async function updateRoom(db: DrizzleD1Database, roomId: string, data: Record<string, any>): Promise<Room | null> {
+    const result = await db.update(rooms).set(data).where(eq(rooms.slug, roomId)).returning().execute();
+    
+    if (result.length === 0) {
+        return null;
+    }
+
+    return {
+        id: result[0].id,
+        slug: result[0].slug ?? "",
+        title: result[0].title ?? "",
+        created_at: result[0].created_at ?? "",
+    }
+}
+
 async function createMessage(db: DrizzleD1Database, roomId: string, userId: string, text: string): Promise<Message | null> {
     const createdAt = getUnixTimestamp();
     const slug = bin2hex(16);
+
+    await updateRoom(db, roomId, {
+        updated_at: createdAt.toString(),
+    });
 
     const result = await db.insert(messages).values({
         room_id: roomId,
@@ -173,4 +192,27 @@ async function createMessage(db: DrizzleD1Database, roomId: string, userId: stri
     }
 }
 
-export { getRooms, getRoomUsers, getRoomDetails, getRoomMessages, createRoom, createMessage };
+async function addUserToRoom(db: DrizzleD1Database, roomId: string, userId: string): Promise<RoomUser | null> {
+    const createdAt = getUnixTimestamp();
+
+    const result = await db.insert(roomUsers).values({
+        room_id: roomId,
+        user_id: userId,
+        is_admin: 0,
+        created_at: formatJST(createdAt),
+    }).returning().execute();
+
+    if (result.length === 0) {
+        return null;
+    }
+
+    return {
+        id: result[0].id,
+        room_id: result[0].room_id ?? "",
+        user_id: result[0].user_id ?? "",
+        is_admin: result[0].is_admin ? true : false,
+        created_at: result[0].created_at ?? "",
+    }
+}
+
+export { getRooms, getRoomUsers, getRoomDetails, getRoomMessages, createRoom, createMessage, addUserToRoom };

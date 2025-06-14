@@ -1,6 +1,4 @@
 import { getRoomDetails, createMessage } from "@/libs/messages";
-import { DrizzleD1Database } from "drizzle-orm/d1";
-import { getUnixTimestamp } from "@/utils/timestamp";
 import { Context } from "hono";
 import Env from "@/interfaces/utils/env";
 
