@@ -1,6 +1,7 @@
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 import { AuthorLayout } from './app/author/layout';
 import { MainLayout } from './app/layout';
+import { ChatRoom } from './durable-objects';
 import { drizzle } from 'drizzle-orm/d1';
 import { Hono } from 'hono';
 import Middleware from './app/middleware';
@@ -37,3 +38,4 @@ WebRouter(app);
 ApiRouter(app);
 
 export default app;
+export { ChatRoom };
