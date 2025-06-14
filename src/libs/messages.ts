@@ -1,5 +1,6 @@
-import { rooms, roomUsers, messages } from "@/db/d1";
 import { Message, Room, RoomUser, RoomResult } from "@/interfaces/messages";
+import { rooms, roomUsers, messages } from "@/db/d1";
+import { getUnixTimestamp, formatJST } from "@/utils/timestamp";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 import { bin2hex } from "@/utils/bin2hex";
 import { eq, asc } from "drizzle-orm";
@@ -48,7 +49,7 @@ async function getRoomUsers(db: DrizzleD1Database, roomId: string): Promise<Arra
     }));
 }
 
-async function getRoomMessages(db: DrizzleD1Database, roomId: string): Promise<Array<Message>> {
+async function getRoomMessages(db: DrizzleD1Database, roomId: string, lastDate?: number): Promise<Array<Message>> {
     const roomResult = await getRoom(db, roomId);
 
     if (!roomResult) {
@@ -57,18 +58,25 @@ async function getRoomMessages(db: DrizzleD1Database, roomId: string): Promise<A
 
     const messagesResult = await db.select().from(messages).orderBy(asc(messages.id)).where(eq(messages.room_id, roomId)).execute();
 
-    return messagesResult.map((message) => ({
-        id: message.id,
-        room_id: message.room_id ?? "",
-        slug: message.slug ?? "",
-        author_id: message.author_id ?? "",
-        text: message.text ?? "",
-        created_at: message.created_at ?? "",
-    }));
+    return messagesResult.map((message) => {
+        const createdAt = parseInt(message.created_at ?? "0");
+
+        if (lastDate && createdAt <= lastDate) {
+            return null;
+        }
+
+        return {
+            id: message.id,
+            room_id: message.room_id ?? "",
+            slug: message.slug ?? "",
+            author_id: message.author_id ?? "",
+            text: message.text ?? "",
+            created_at: message.created_at ?? "",
+        }
+    }).filter((message) => message !== null);
 }
 
-
-async function getRoomDetails(db: DrizzleD1Database, roomId: string): Promise<RoomResult | null> {
+async function getRoomDetails(db: DrizzleD1Database, roomId: string, lastDate?: number): Promise<RoomResult | null> {
     const room = await getRoom(db, roomId);
 
     if (!room) {
@@ -76,7 +84,7 @@ async function getRoomDetails(db: DrizzleD1Database, roomId: string): Promise<Ro
     }
 
     const users = await getRoomUsers(db, roomId);
-    const messages = await getRoomMessages(db, roomId);
+    const messages = await getRoomMessages(db, roomId, lastDate);
 
     return {
         room,
@@ -88,11 +96,12 @@ async function getRoomDetails(db: DrizzleD1Database, roomId: string): Promise<Ro
 async function createRoom(db: DrizzleD1Database, adminId: string, users: string[], title: string): Promise<RoomResult | null> {
     const roomId: string = bin2hex(16);
     const insertedUsers: string[] = [];
+    const createdAt = getUnixTimestamp();
 
     const room = await db.insert(rooms).values({
         slug: roomId,
         title: title,
-        created_at: new Date().toISOString(),
+        created_at: createdAt.toString(),
     }).returning().execute();
 
     if (room.length === 0) {
@@ -107,7 +116,7 @@ async function createRoom(db: DrizzleD1Database, adminId: string, users: string[
                 room_id: roomId,
                 user_id: userId,
                 is_admin: userId === adminId ? 1 : 0,
-                created_at: new Date().toISOString(),
+                created_at: formatJST(createdAt),
             }
         }
 
@@ -125,7 +134,7 @@ async function createRoom(db: DrizzleD1Database, adminId: string, users: string[
             id: room[0].id,
             slug: roomId,
             title: title,
-            created_at: new Date().toISOString(),
+            created_at: formatJST(createdAt),
         },
         users: result.map((roomUser) => ({
             id: roomUser.id,
@@ -138,4 +147,30 @@ async function createRoom(db: DrizzleD1Database, adminId: string, users: string[
     }
 }
 
-export { getRooms, getRoomUsers, getRoomDetails, getRoomMessages, createRoom };
+async function createMessage(db: DrizzleD1Database, roomId: string, userId: string, text: string): Promise<Message | null> {
+    const createdAt = getUnixTimestamp();
+    const slug = bin2hex(16);
+
+    const result = await db.insert(messages).values({
+        room_id: roomId,
+        slug: slug,
+        author_id: userId,
+        text: text,
+        created_at: createdAt.toString(),
+    }).returning().execute();
+
+    if (result.length === 0) {
+        return null;
+    }
+
+    return {
+        id: result[0].id,
+        slug,
+        room_id: result[0].room_id ?? "",
+        author_id: result[0].author_id ?? "",
+        text: result[0].text ?? "",
+        created_at: result[0].created_at ?? "",
+    }
+}
+
+export { getRooms, getRoomUsers, getRoomDetails, getRoomMessages, createRoom, createMessage };

@@ -2,6 +2,7 @@ const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
 const messageLog = document.querySelector('#message-log');
 const roomId = window.location.pathname.replace('/author/messages/', '');
+let lastDate = Math.floor(Date.now() / 1000); 
 
 /**
  * メッセージ受信時に実行する関数
@@ -47,12 +48,18 @@ function addMessageLog(icon, authorId, content, createdAt) {
     messageLog.appendChild(messageElement);
 }
 
+function formatJST(unixSeconds) {
+    const date = new Date(unixSeconds * 1000);
+    return date.toLocaleString();
+}
+
 sendButton.addEventListener('click', async (e) => {
     e.preventDefault();
 
-    const message = messageBox.value;
+    const content = messageBox.value;
+    console.log(content);
 
-    if (!(message && message.length >= 1)) {
+    if (!(content && content.length >= 1)) {
         alert('メッセージは一文字以上必要です');
         return;
     }
@@ -61,19 +68,23 @@ sendButton.addEventListener('click', async (e) => {
         const response = await fetch(`/api/v4/messages/${roomId}`, {
             method: 'POST',
             body: JSON.stringify({
-                content: message
+                content
             }),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        const data = await response.json();
+        const result = await response.json();
 
-        if (!data.success) {
-            throw new Error(data.message);
+        if (!result.success) {
+            throw new Error(result.message);
         }
 
+        const { message } = result.data;
 
+        lastDate = parseInt(message.created_at);
+
+        addMessageLog('👤', message.author_id, message.text, formatJST(lastDate));
     } catch (e) {
         console.error(e);
         alert('メッセージの送信に失敗しました');
@@ -81,3 +92,23 @@ sendButton.addEventListener('click', async (e) => {
 
     messageBox.value = "";
 });
+
+setInterval(async () => {
+    const response = await fetch(`/api/v4/messages/${roomId}?last_date=${lastDate}`, {
+        method: 'GET',
+    });
+    const data = await response.json();
+
+    console.log(data);
+
+    if (!data.success) {
+        throw new Error(data.message);
+    }
+
+    const { messages } = data.data;
+
+    messages.forEach((message) => {
+        lastDate = parseInt(message.created_at);
+        addMessageLog('👤', message.author_id, message.text, formatJST(lastDate));
+    });
+}, 1000);

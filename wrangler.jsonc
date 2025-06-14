@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "renovel-dev-mine",
+  "name": "renovel",
   "compatibility_date": "2024-09-23",
   "main": "./src/index.tsx",
   "assets": {

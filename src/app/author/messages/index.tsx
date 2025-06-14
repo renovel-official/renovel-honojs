@@ -7,6 +7,10 @@ interface AuthorMessagesProps {
 }
 
 export default function AuthorMessages({ rooms }: AuthorMessagesProps) {
+    const sortedRooms = rooms.sort((a, b) => {
+        return parseInt(b.room.created_at) - parseInt(a.room.created_at);
+    });
+
     return (
         <main class="p-5 w-full">
             <AuthorTitle>メッセージ</AuthorTitle>
@@ -20,7 +24,7 @@ export default function AuthorMessages({ rooms }: AuthorMessagesProps) {
                     </div>
 
                 ) : (
-                    rooms.map((room: RoomResult) => {
+                    sortedRooms.map((room: RoomResult) => {
                         return (
                             <MessageSelect roomDetails={room} />
                         );
