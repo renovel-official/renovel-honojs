@@ -1,5 +1,5 @@
 import { DrizzleD1Database } from "drizzle-orm/d1";
-import { addUserToRoom } from "@/libs/messages";
+import { addUserToRoom, createMessage } from "@/libs/messages";
 import { registUser } from "@/libs/user";
 import { Context } from "hono";
 import Env from "@/interfaces/utils/env";
@@ -61,6 +61,7 @@ async function registerHandler(c: Context<Env>) {
     }
 
     await addUserToRoom(db, "all_users", data.slug);
+    await createMessage(db, "all_users", "system", `${data.name}さんが参加しました！`);
 
     if (data.location) {
         return c.redirect(data.location);
