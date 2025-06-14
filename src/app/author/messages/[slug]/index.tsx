@@ -48,7 +48,7 @@ export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoo
                 </div>
             </div>
 
-            <script src="/assets/service/author/messages/chat.js" defer></script>
+            <script src="/assets/service/author/messages/chat.default.js" defer></script>
         </main>
     );
 }
