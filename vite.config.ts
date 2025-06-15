@@ -24,7 +24,10 @@ export default defineConfig(({ command, isSsrBuild }) => {
         // ssrHotReload(), // 有効にしたければコメントアウト解除
         cloudflare(),
         tailwindcss()
-      ]
+      ],
+      server: {
+        allowedHosts: [".ngrok-free.app"]
+      }
     }
   }
 
@@ -61,4 +64,4 @@ export default defineConfig(({ command, isSsrBuild }) => {
       }
     }
   }
-})
+});

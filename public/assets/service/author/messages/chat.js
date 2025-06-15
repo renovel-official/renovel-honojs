@@ -2,7 +2,8 @@ const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
 const messageLog = document.querySelector('#message-log');
 const roomId = window.location.pathname.replace('/author/messages/', '');
-let lastDate = Math.floor(Date.now() / 1000); 
+const messageIds = [];
+let lastDate = Math.floor(Date.now() / 1000);
 
 /**
  * メッセージ受信時に実行する関数
@@ -83,7 +84,7 @@ sendButton.addEventListener('click', async (e) => {
         const { message } = result.data;
 
         lastDate = parseInt(message.created_at);
-
+        messageIds.push(message.slug);
         addMessageLog('👤', message.author_id, message.text, formatJST(lastDate));
     } catch (e) {
         console.error(e);
@@ -108,7 +109,12 @@ setInterval(async () => {
     const { messages } = data.data;
 
     messages.forEach((message) => {
+        if (messageIds.includes(message.slug)) {
+            return;
+        }
+
         lastDate = parseInt(message.created_at);
+        messageIds.push(message.slug);
         addMessageLog('👤', message.author_id, message.text, formatJST(lastDate));
     });
 }, 1000);
