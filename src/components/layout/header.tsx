@@ -1,10 +1,12 @@
 import Link from '@/components/ui/header/link';
 
+
 interface HeaderProps {
     login?: boolean;
+    scripts?: Array<{ src: string, type?: "" | "text/javascript" | "importmap" | "module" }>;
 }
 
-export default function Header({ login = false }: HeaderProps) {
+export default function Header({ login = false, scripts = [] }: HeaderProps) {
     return (
         <header class="bg-white shadow-md" id="header">
             <div class="container mx-auto px-4 py-3">
@@ -72,6 +74,11 @@ export default function Header({ login = false }: HeaderProps) {
             </div>
 
             <script src="/assets/service/header.js" defer></script>
+            { scripts.map((script) => {
+                return (
+                    <script src={script.src} type={script.type} />
+                )
+            }) }
         </header>
     );
 }

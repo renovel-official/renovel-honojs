@@ -1,8 +1,8 @@
 import { Novel, NovelResult, NovelAuthor } from "@/interfaces/novel";
 import { novels, authorNovels, episodes } from "@/db/d1";
 import { DrizzleD1Database } from "drizzle-orm/d1";
+import { Episode } from "@/interfaces/episode";
 import { eq } from "drizzle-orm";
-import Episode from "@/interfaces/episode";
 
 export async function getNovel(db: DrizzleD1Database, workId: string) {
     const works = await db.select().from(novels).where(eq(novels.slug, workId)).limit(1).execute();

@@ -8,6 +8,12 @@ import Footer from '@/components/layout/footer';
 import Head from '@/components/layout/head';
 import Env from '@/interfaces/utils/env';
 
+const scripts = [
+    {
+        src: "https://cdn.ably.com/lib/ably.min-2.js"
+    }
+];
+
 export const AuthorLayout = jsxRenderer(async ({ children }, c: Context<Env>) => {
     const db = c.get('db');
     const token = getCookie(c, 's-token') ?? "";
@@ -21,7 +27,7 @@ export const AuthorLayout = jsxRenderer(async ({ children }, c: Context<Env>) =>
 
             <body class={`bg-gray-100 text-gray-800`}>
                 { /** ヘッダー */}
-                <Header login={login} />
+                <Header login={login} scripts={scripts}/>
 
                 <div className="flex">
                     <Sidebar />

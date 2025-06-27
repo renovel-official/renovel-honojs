@@ -82,7 +82,6 @@ async function getRoomMessages(
     }));
 }
 
-
 async function getRoomDetails(db: DrizzleD1Database, roomId: string, lastDate?: number): Promise<RoomResult | null> {
     const room = await getRoom(db, roomId);
 
@@ -222,4 +221,12 @@ async function addUserToRoom(db: DrizzleD1Database, roomId: string, userId: stri
     }
 }
 
-export { getRooms, getRoomUsers, getRoomDetails, getRoomMessages, createRoom, createMessage, addUserToRoom };
+async function removeUserFromRoom(db: DrizzleD1Database, roomId: string, userId: string): Promise<void> {
+    await db.delete(roomUsers).where(and(eq(roomUsers.room_id, roomId), eq(roomUsers.user_id, userId))).execute();
+}
+
+export { 
+    getRooms, getRoom, getRoomUsers, 
+    getRoomDetails, getRoomMessages, createRoom,
+    createMessage, addUserToRoom, removeUserFromRoom 
+};

@@ -6,8 +6,9 @@ import { sessionHandler } from "./api/v1/session";
 import { authorsHandler } from "./api/v2/authors";
 import { registerHandler } from "./api/v1/register";
 import { createRoomHandler } from "./api/v4/create";
+import { placeholderHandler } from "./api/utils/placeholder";
+import { getMessageRealTimeTokenHandler } from "./api/v4/[roomId]/token";
 import { postMessagesHandler, getMessagesHandler } from "./api/v4/[roomId]/messages";
-import placeholderHandler from "./api/utils/placeholder";
 import Env from "@/interfaces/utils/env";
 
 export default ((app: Hono<Env>) => {
@@ -43,6 +44,7 @@ export default ((app: Hono<Env>) => {
     app.post('/api/v4/messages', createRoomHandler);
     app.get('/api/v4/messages/:roomId', getMessagesHandler);
     app.post('/api/v4/messages/:roomId', postMessagesHandler);
+    app.get('/api/v4/messages/:roomId/token', getMessageRealTimeTokenHandler);
     
     app.get('/api/v5/search', );
     app.get('/api/v5/ranking', );
