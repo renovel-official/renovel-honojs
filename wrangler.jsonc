@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "renovel",
+  "name": "renovel-dev-mine", // renovel renovel-dev renovel-dev-2 renovel-dev-mine
   "compatibility_date": "2024-09-23",
   "main": "./src/index.tsx",
   "assets": {
@@ -23,7 +23,7 @@
   // "durable_objects": {
   //   "bindings": [
   //     {
-  //       "name": "ReNovel-Chat",
+  //       "name": "CHATROOM",
   //       "class_name": "ChatRoom"
   //     }
   //   ]

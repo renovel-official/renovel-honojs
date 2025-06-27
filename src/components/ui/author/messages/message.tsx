@@ -1,3 +1,4 @@
+import { htmlSpecialChars } from "@/utils/html";
 import { formatJST } from "@/utils/timestamp";
 import { Message } from "@/interfaces/messages";
 
@@ -8,6 +9,7 @@ interface MessageLogProps {
 
 export default function MessageLog({ icon, message }: MessageLogProps) {
     const { author_id, text, created_at } = message;
+    const content = htmlSpecialChars(text).replaceAll("\n", "<br />");
 
     return (
         <div className="flex items-start space-x-3 p-4 border-b border-gray-200">
@@ -18,7 +20,7 @@ export default function MessageLog({ icon, message }: MessageLogProps) {
                     <span className="font-semibold">{ author_id }</span>
                     <span className="text-xs text-gray-500">{ formatJST(parseInt(created_at)) }</span>
                 </div>
-                <div className="mt-1 text-gray-700">{ text }</div>
+                <div className="mt-1 text-gray-700" dangerouslySetInnerHTML={{ __html: content }} />
             </div>
         </div>
     );

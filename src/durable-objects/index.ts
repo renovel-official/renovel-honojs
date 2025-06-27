@@ -1,65 +1,51 @@
-import { DurableObjectState } from "@cloudflare/workers-types";
+// chatRoom.ts
+import type { DurableObjectState, WebSocketPair } from "@cloudflare/workers-types";
 
-interface Payload {
-    message: string;
-    sender: any;
-    
-}
-
+// WebSocket 接続の管理用 Durable Object
 export class ChatRoom {
   state: DurableObjectState;
-  sessions: Map<string, WritableStreamDefaultWriter>;
+  env: any;
+  connections: Map<WebSocket, string>;
 
-  constructor(state: DurableObjectState | any, env: any) {
+  constructor(state: DurableObjectState, env: any) {
     this.state = state;
-    this.sessions = new Map();
+    this.env = env;
+    this.connections = new Map();
   }
 
   async fetch(request: Request): Promise<Response> {
-    const url = new URL(request.url);
-    const roomId = url.pathname.split('/').pop();
-    const { searchParams } = url;
-    const clientId = searchParams.get('clientId') || crypto.randomUUID();
+    const upgradeHeader = request.headers.get("Upgrade");
 
-    if (request.method === 'POST') {
-      const { message, sender } = (await request.json()) as Payload;
-      this.broadcast({ message, sender });
-      return new Response('OK');
+    if (upgradeHeader !== "websocket") {
+      return new Response("Expected websocket", { status: 426 });
     }
 
-    if (request.method === 'GET') {
-      const { readable, writable } = new TransformStream();
-      const writer = writable.getWriter();
-      this.sessions.set(clientId, writer);
+    const pair = new WebSocketPair();
+    const client = pair[0];
+    const server = pair[1];
 
-      const keepAlive = setInterval(() => {
-        writer.write(`:\n\n`);
-      }, 15000);
+    server.accept();
 
-      request.signal?.addEventListener('abort', () => {
-        writer.close();
-        clearInterval(keepAlive);
-        this.sessions.delete(clientId);
-      });
+    this.connections.set(server, ""); // 名前等が必要なら調整
 
-      return new Response(readable, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-        },
-      });
-    }
+    server.addEventListener("message", (event) => {
+      const message = event.data;
 
-    return new Response('Not Found', { status: 404 });
-  }
+      // すべてのクライアントにブロードキャスト
+      for (const [conn] of this.connections) {
+        if (conn.readyState === WebSocket.OPEN) {
+          conn.send(message);
+        }
+      }
+    });
 
-  broadcast(data: { message: string; sender: string }) {
-    const payload = `data: ${JSON.stringify(data)}\n\n`;
-    for (const [id, writer] of this.sessions) {
-      writer.write(payload).catch(() => {
-        this.sessions.delete(id);
-      });
-    }
+    server.addEventListener("close", () => {
+      this.connections.delete(server);
+    });
+
+    return new Response(null, {
+      status: 101,
+      webSocket: client,
+    } as unknown as ResponseInit); // TypeScript workaround
   }
 }

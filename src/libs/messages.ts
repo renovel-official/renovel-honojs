@@ -3,7 +3,7 @@ import { rooms, roomUsers, messages } from "@/db/d1";
 import { getUnixTimestamp, formatJST } from "@/utils/timestamp";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 import { bin2hex } from "@/utils/bin2hex";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, and, gt } from "drizzle-orm";
 
 async function getRooms(db: DrizzleD1Database, userId: string): Promise<Array<RoomResult>> {
     const getResult = await db.select().from(roomUsers).orderBy(asc(roomUsers.id)).where(eq(roomUsers.user_id, userId)).execute();
@@ -49,32 +49,39 @@ async function getRoomUsers(db: DrizzleD1Database, roomId: string): Promise<Arra
     }));
 }
 
-async function getRoomMessages(db: DrizzleD1Database, roomId: string, lastDate?: number): Promise<Array<Message>> {
+async function getRoomMessages(
+    db: DrizzleD1Database,
+    roomId: string,
+    lastDate?: number
+): Promise<Array<Message>> {
     const roomResult = await getRoom(db, roomId);
 
     if (!roomResult) {
         return [];
     }
 
-    const messagesResult = await db.select().from(messages).orderBy(asc(messages.id)).where(eq(messages.room_id, roomId)).execute();
+    // SQLレベルで created_at によるフィルタを追加
+    const whereClause = lastDate
+        ? and(eq(messages.room_id, roomId), gt(messages.created_at, lastDate.toString()))
+        : eq(messages.room_id, roomId);
 
-    return messagesResult.map((message) => {
-        const createdAt = parseInt(message.created_at ?? "0");
+    const messagesResult = await db
+        .select()
+        .from(messages)
+        .where(whereClause)
+        .orderBy(asc(messages.created_at)) // id順ではなく、created_at順に
+        .execute();
 
-        if (lastDate && createdAt <= lastDate) {
-            return null;
-        }
-
-        return {
-            id: message.id,
-            room_id: message.room_id ?? "",
-            slug: message.slug ?? "",
-            author_id: message.author_id ?? "",
-            text: message.text ?? "",
-            created_at: message.created_at ?? "",
-        }
-    }).filter((message) => message !== null);
+    return messagesResult.map((message) => ({
+        id: message.id,
+        room_id: message.room_id ?? "",
+        slug: message.slug ?? "",
+        author_id: message.author_id ?? "",
+        text: message.text ?? "",
+        created_at: message.created_at ?? "",
+    }));
 }
+
 
 async function getRoomDetails(db: DrizzleD1Database, roomId: string, lastDate?: number): Promise<RoomResult | null> {
     const room = await getRoom(db, roomId);
@@ -167,7 +174,7 @@ async function createMessage(db: DrizzleD1Database, roomId: string, userId: stri
     const slug = bin2hex(16);
 
     await updateRoom(db, roomId, {
-        updated_at: createdAt.toString(),
+        created_at: createdAt.toString(),
     });
 
     const result = await db.insert(messages).values({
