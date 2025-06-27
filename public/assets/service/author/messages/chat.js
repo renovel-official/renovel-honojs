@@ -108,7 +108,8 @@ setInterval(async () => {
     const { messages } = data.data;
 
     messages.forEach((message) => {
-        lastDate = parseInt(message.created_at);
+        lastDate = parseInt(message.created_at) + 1;
         addMessageLog('👤', message.author_id, message.text, formatJST(lastDate));
+
     });
 }, 1000);
