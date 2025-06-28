@@ -42,4 +42,8 @@ async function getMessagesHandler(c: Context<Env>) {
     return c.json({ success: true, message: "Success to get room details", data: { ...result } });
 }
 
+async function deleteMessageHandler(c: Context<Env>) {
+    
+}
+
 export { postMessagesHandler, getMessagesHandler };

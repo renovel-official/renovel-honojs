@@ -14,6 +14,7 @@ export default function Head({ title, description, image }: HeadProps) {
             <meta property="og:description" content={description ?? "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。"} />
             <meta property="og:image" content={image ?? "https://v2.renovel.jp/renovel_ogp.png"} />
             <meta property="og:type" content="website" />
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
             <script src="https://cdn.tailwindcss.com"></script>
 
             <meta name="description" content={description ?? "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。"} />
@@ -25,6 +26,7 @@ export default function Head({ title, description, image }: HeadProps) {
             <meta property="og:image:width" content="1200" />
             <meta property="og:image:height" content="630" />
             <meta property="og:image:alt" content="ReNovelのOGP" />
+
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:site" content="@ReNovel" />
             <meta name="twitter:title" content={title ?? "ReNovel | 小説家の卵を発掘する小説投稿サイト"} />
@@ -32,6 +34,8 @@ export default function Head({ title, description, image }: HeadProps) {
             <meta name="twitter:image" content="https://v2.renovel.jp/renovel_ogp.png" />
             <meta name="robots" content="index, follow" />
             <link rel="icon" href="/favicon.ico" />
+
+            
 
         </head>
     )

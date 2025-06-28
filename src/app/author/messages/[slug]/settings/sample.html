@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ルーム設定 | ReNovel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <header class="bg-white shadow-md" id="header">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center text-2xl sm:text-3xl font-bold">
+                    <img src="/icon.png" alt="ReNovel" width="40" height="40" class="mr-2"/>
+                    ReNovel
+                </a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="/" class="text-gray-700 hover:text-gray-900 transition duration-300">ホーム</a>
+                    <a href="/search" class="text-gray-700 hover:text-gray-900 transition duration-300">小説を探す</a>
+                    <a href="/ranking" class="text-gray-700 hover:text-gray-900 transition duration-300">ランキング</a>
+                    <a href="/new" class="text-gray-700 hover:text-gray-900 transition duration-300">新着作品</a>
+                    <a href="/blog" class="text-gray-700 hover:text-gray-900 transition duration-300">運営ブログ</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-3">
+                    <a href="/author/works" class="text-gray-700 hover:text-gray-900 transition duration-300">作品一覧</a>
+                    <a href="/author" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300">ダッシュボード</a>
+                </div>
+                <button class="md:hidden text-2xl text-gray-700" id="mobile-menu-btn">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <div class="p-5 bg-white mt-6 ml-4 mb-6 rounded-md" id="sidebar">
+            <nav class="space-y-4">
+                <a href="/author" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-tachometer-alt mr-3"></i>ダッシュボード
+                </a>
+                <a href="/author/works" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-book mr-3"></i>作品管理
+                </a>
+                <a href="/author/blogs" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-blog mr-3"></i>ブログ管理
+                </a>
+                <a href="/author/messages" class="flex items-center p-3 rounded-lg bg-gray-200 text-gray-900 transition duration-300">
+                    <i class="fas fa-envelope mr-3"></i>メッセージ
+                </a>
+                <a href="/author/following-users" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-users mr-3"></i>フォロー管理
+                </a>
+                <a href="/author/setting" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-cog mr-3"></i>設定
+                </a>
+                <a href="/api/v1/logout?location=/" class="flex items-center p-3 rounded-lg text-red-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-sign-out-alt mr-3"></i>ログアウト
+                </a>
+            </nav>
+        </div>
+
+        <div class="w-full container mx-auto px-4 py-6 h-full">
+            <main class="p-5 w-full">
+                <!-- ヘッダー部分 -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <a href="/author/messages" class="text-gray-600 hover:text-gray-800 transition duration-300">
+                            <i class="fas fa-arrow-left text-lg"></i>
+                        </a>
+                        <h1 class="text-3xl font-bold">ルーム設定</h1>
+                    </div>
+                    <div class="bg-blue-50 px-3 py-1 rounded-full">
+                        <span class="text-blue-600 text-sm font-medium">
+                            <i class="fas fa-users mr-1"></i>
+                            tanahiro2010と猫さんの会話
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 設定項目 -->
+                <div class="space-y-6">
+                    <!-- 1. ルーム名設定 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-edit text-blue-600"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">ルーム名</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">ルーム名</label>
+                                <input type="text" 
+                                       value="tanahiro2010と猫さんの会話" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       placeholder="ルーム名を入力">
+                            </div>
+                            <div class="flex justify-end">
+                                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                    <i class="fas fa-save mr-1"></i>保存
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. メンバー管理 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-users text-green-600"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">メンバー管理</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- メンバーリスト -->
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-4 border rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user text-gray-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-800">tanahiro2010</div>
+                                            <div class="text-sm text-gray-500">管理者</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">管理者</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 border rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user text-gray-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-800">猫さん</div>
+                                            <div class="text-sm text-gray-500">メンバー</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <select class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <option>メンバー</option>
+                                            <option>管理者</option>
+                                        </select>
+                                        <button class="text-red-600 hover:text-red-800 p-2">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- メンバー追加 -->
+                            <div class="border-t pt-4">
+                                <div class="flex space-x-3">
+                                    <input type="text" 
+                                           placeholder="ユーザー名を入力" 
+                                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                                        <i class="fas fa-plus mr-1"></i>追加
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. メッセージログ削除 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-orange-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-history text-orange-600"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">メッセージログ削除</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                                <div class="flex items-start space-x-3">
+                                    <i class="fas fa-exclamation-triangle text-orange-600 mt-1"></i>
+                                    <div>
+                                        <h3 class="font-medium text-orange-800 mb-1">注意事項</h3>
+                                        <p class="text-sm text-orange-700">
+                                            削除されたメッセージは復元できません。慎重に操作してください。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="border rounded-lg p-4">
+                                    <h3 class="font-medium text-gray-800 mb-2">期間指定削除</h3>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm text-gray-600 mb-1">開始日</label>
+                                            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm text-gray-600 mb-1">終了日</label>
+                                            <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <button class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700 transition duration-300">
+                                            期間指定削除
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="border rounded-lg p-4">
+                                    <h3 class="font-medium text-gray-800 mb-2">全ログ削除</h3>
+                                    <p class="text-sm text-gray-600 mb-4">
+                                        このルームの全てのメッセージログを削除します。
+                                    </p>
+                                    <button class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-300" 
+                                            onclick="confirmDeleteAllLogs()">
+                                        全ログ削除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. ルーム削除 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-red-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-trash text-red-600"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">ルーム削除</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <div class="flex items-start space-x-3">
+                                    <i class="fas fa-exclamation-circle text-red-600 mt-1"></i>
+                                    <div>
+                                        <h3 class="font-medium text-red-800 mb-1">危険な操作</h3>
+                                        <p class="text-sm text-red-700">
+                                            ルームを削除すると、全てのメッセージとメンバー情報が完全に削除されます。この操作は取り消せません。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border rounded-lg p-4">
+                                <h3 class="font-medium text-gray-800 mb-3">削除の確認</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm text-gray-600 mb-2">
+                                            削除を確認するために「<span class="font-medium">削除</span>」と入力してください
+                                        </label>
+                                        <input type="text" 
+                                               placeholder="削除" 
+                                               id="deleteConfirmation"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    </div>
+                                    <button class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" 
+                                            id="deleteRoomBtn"
+                                            disabled
+                                            onclick="confirmDeleteRoom()">
+                                        <i class="fas fa-trash mr-1"></i>ルームを削除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">NovelHub</h4>
+                    <p class="text-gray-400 text-sm">作家と読者をつなぐ小説投稿プラットフォーム</p>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-3">サービス</h5>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">小説を読む</a></li>
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">作品投稿</a></li>
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">ランキング</a></li>
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">コンテスト</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-3">サポート</h5>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">ヘルプ</a></li>
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">利用規約</a></li>
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">プライバシーポリシー</a></li>
+                        <li><a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">お問い合わせ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-3">フォロー</h5>
+                    <div class="flex space-x-3">
+                        <a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="/" class="text-gray-400 hover:text-gray-600 transition duration-300">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-sm text-gray-400">
+                <p>© 2024 NovelHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 削除確認の入力チェック
+        document.getElementById('deleteConfirmation').addEventListener('input', function(e) {
+            const deleteBtn = document.getElementById('deleteRoomBtn');
+            if (e.target.value === '削除') {
+                deleteBtn.disabled = false;
+            } else {
+                deleteBtn.disabled = true;
+            }
+        });
+
+        // 全ログ削除の確認
+        function confirmDeleteAllLogs() {
+            if (confirm('本当に全てのメッセージログを削除しますか？この操作は取り消せません。')) {
+                alert('全ログが削除されました。');
+            }
+        }
+
+        // ルーム削除の確認
+        function confirmDeleteRoom() {
+            if (confirm('本当にこのルームを削除しますか？全てのデータが失われます。')) {
+                alert('ルームが削除されました。メッセージ一覧に戻ります。');
+                // 実際の実装では /author/messages にリダイレクト
+            }
+        }
+    </script>
+</body>
+</html>

@@ -139,7 +139,7 @@ function scroll() {
             const { data } = msg;
             const createdAt = formatJST(msg.createdAt);
 
-            addMessageLog(data.from === slug ? '👤' : '👥', slug, data.content, (createdAt))
+            addMessageLog(data.from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
 
             messageLog.scrollTo({
                 top: messageLog.scrollHeight,
@@ -174,6 +174,7 @@ function scroll() {
             return;
         });
     });
+
     ably.connection.on((stateChange) => {
         console.log('Ably connection state:', stateChange);
     });

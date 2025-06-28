@@ -44,7 +44,7 @@ async function getRoomUsers(db: DrizzleD1Database, roomId: string): Promise<Arra
         id: roomUser.id,
         room_id: roomUser.room_id ?? "",
         user_id: roomUser.user_id ?? "",
-        is_admin: roomUser.is_admin ? true : false,
+        is_admin: roomUser.is_admin ?? 0,
         created_at: roomUser.created_at ?? "",
     }));
 }
@@ -122,7 +122,7 @@ async function createRoom(db: DrizzleD1Database, adminId: string, users: string[
                 room_id: roomId,
                 user_id: userId,
                 is_admin: userId === adminId ? 1 : 0,
-                created_at: formatJST(createdAt),
+                created_at: createdAt.toString(),
             }
         }
 
@@ -146,7 +146,7 @@ async function createRoom(db: DrizzleD1Database, adminId: string, users: string[
             id: roomUser.id,
             room_id: roomUser.room_id ?? "",
             user_id: roomUser.user_id ?? "",
-            is_admin: roomUser.is_admin ? true : false,
+            is_admin: roomUser.is_admin ?? 0,
             created_at: roomUser.created_at ?? "",
         })),
         messages: [],
@@ -216,7 +216,7 @@ async function addUserToRoom(db: DrizzleD1Database, roomId: string, userId: stri
         id: result[0].id,
         room_id: result[0].room_id ?? "",
         user_id: result[0].user_id ?? "",
-        is_admin: result[0].is_admin ? true : false,
+        is_admin: result[0].is_admin ?? 0,
         created_at: result[0].created_at ?? "",
     }
 }

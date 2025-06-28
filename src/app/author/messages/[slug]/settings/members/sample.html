@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>メンバー管理 | ReNovel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <header class="bg-white shadow-md" id="header">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center text-2xl sm:text-3xl font-bold">
+                    <img src="/icon.png" alt="ReNovel" width="40" height="40" class="mr-2"/>
+                    ReNovel
+                </a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="/" class="text-gray-700 hover:text-gray-900 transition duration-300">ホーム</a>
+                    <a href="/search" class="text-gray-700 hover:text-gray-900 transition duration-300">小説を探す</a>
+                    <a href="/ranking" class="text-gray-700 hover:text-gray-900 transition duration-300">ランキング</a>
+                    <a href="/new" class="text-gray-700 hover:text-gray-900 transition duration-300">新着作品</a>
+                    <a href="/blog" class="text-gray-700 hover:text-gray-900 transition duration-300">運営ブログ</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-3">
+                    <a href="/author/works" class="text-gray-700 hover:text-gray-900 transition duration-300">作品一覧</a>
+                    <a href="/author" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition duration-300">ダッシュボード</a>
+                </div>
+                <button class="md:hidden text-2xl text-gray-700" id="mobile-menu-btn">☰</button>
+            </div>
+        </div>
+        <div id="mobile-overlay" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden">
+            <div class="absolute top-0 right-0 w-4/5 max-w-sm h-full bg-white shadow-lg p-5 flex flex-col space-y-4 animate-slide-in">
+                <button id="close-mobile-menu" class="self-end text-2xl text-gray-500 hover:text-gray-800">×</button>
+                <nav class="flex flex-col space-y-4 text-lg">
+                    <a href="/" class="text-gray-700 hover:text-gray-900 transition duration-300">ホーム</a>
+                    <a href="/search" class="text-gray-700 hover:text-gray-900 transition duration-300">小説を探す</a>
+                    <a href="/ranking" class="text-gray-700 hover:text-gray-900 transition duration-300">ランキング</a>
+                    <a href="/new" class="text-gray-700 hover:text-gray-900 transition duration-300">新着作品</a>
+                    <a href="/blog" class="text-gray-700 hover:text-gray-900 transition duration-300">運営ブログ</a>
+                    <a href="/author/works" class="hover:text-gray-900">作品一覧</a>
+                    <a href="/author" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition">ダッシュボード</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <div class="p-5 bg-white mt-6 ml-4 mb-6 rounded-md" id="sidebar">
+            <nav class="space-y-4">
+                <a href="/author" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-tachometer-alt mr-3"></i>ダッシュボード
+                </a>
+                <a href="/author/works" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-book mr-3"></i>作品管理
+                </a>
+                <a href="/author/blogs" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-blog mr-3"></i>ブログ管理
+                </a>
+                <a href="/author/messages" class="flex items-center p-3 rounded-lg bg-gray-200 text-gray-900 transition duration-300">
+                    <i class="fas fa-envelope mr-3"></i>メッセージ
+                </a>
+                <a href="/author/following-users" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-users mr-3"></i>フォロー管理
+                </a>
+                <a href="/author/setting" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-cog mr-3"></i>設定
+                </a>
+                <a href="/api/v1/logout?location=/" class="flex items-center p-3 rounded-lg text-red-700 hover:bg-gray-200 transition duration-300">
+                    <i class="fas fa-sign-out-alt mr-3"></i>ログアウト
+                </a>
+            </nav>
+        </div>
+
+        <div class="w-full container mx-auto px-4 py-6 h-full">
+            <main class="p-5 w-full">
+                <!-- ページヘッダー -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-2">
+                            <a href="/author/messages" class="text-gray-500 hover:text-gray-700 transition duration-300">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                            <h1 class="text-3xl font-bold text-gray-800">メンバー管理</h1>
+                        </div>
+                        <p class="text-gray-600">チャットルーム「【秋刀魚さん】ネタ考案所」のメンバーを管理します</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300" id="invite-member-btn">
+                            <i class="fas fa-user-plus mr-2"></i>メンバー招待
+                        </button>
+                        <button class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition duration-300" id="room-settings-btn">
+                            <i class="fas fa-cog mr-2"></i>ルーム設定
+                        </button>
+                    </div>
+                </div>
+
+                <!-- メンバー統計 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-users text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-2xl font-bold text-gray-800">8</h3>
+                                <p class="text-gray-600 text-sm">総メンバー数</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-user-shield text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-2xl font-bold text-gray-800">2</h3>
+                                <p class="text-gray-600 text-sm">管理者</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="bg-orange-100 p-3 rounded-full">
+                                <i class="fas fa-clock text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-2xl font-bold text-gray-800">5</h3>
+                                <p class="text-gray-600 text-sm">アクティブ（今日）</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- メンバー検索・フィルター -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                        <div class="flex-1 max-w-md">
+                            <div class="relative">
+                                <input type="text" placeholder="メンバーを検索..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>すべての権限</option>
+                                <option>管理者</option>
+                                <option>モデレーター</option>
+                                <option>一般メンバー</option>
+                            </select>
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>すべてのステータス</option>
+                                <option>オンライン</option>
+                                <option>離席中</option>
+                                <option>オフライン</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- メンバーリスト -->
+                <div class="bg-white rounded-lg shadow-sm">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-800">メンバー一覧</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <!-- 管理者メンバー -->
+                            <div class="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-semibold text-lg">田</span>
+                                        </div>
+                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <h4 class="font-semibold text-gray-800">tanahiro2010</h4>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <i class="fas fa-crown mr-1"></i>管理者
+                                            </span>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">開発者</span>
+                                        </div>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                            <span><i class="fas fa-calendar mr-1"></i>参加日: 2024/01/15</span>
+                                            <span><i class="fas fa-comments mr-1"></i>156 メッセージ</span>
+                                            <span class="text-green-600"><i class="fas fa-circle mr-1"></i>オンライン</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="プロフィール表示">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="メッセージ履歴">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <div class="relative">
+                                        <button class="text-gray-600 hover:text-gray-800 p-2" title="その他の操作">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 秋刀魚さん -->
+                            <div class="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-semibold text-lg">秋</span>
+                                        </div>
+                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-yellow-500 border-2 border-white rounded-full"></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <h4 class="font-semibold text-gray-800">秋刀魚さん</h4>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <i class="fas fa-shield-alt mr-1"></i>モデレーター
+                                            </span>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">作家</span>
+                                        </div>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                            <span><i class="fas fa-calendar mr-1"></i>参加日: 2024/02/20</span>
+                                            <span><i class="fas fa-comments mr-1"></i>89 メッセージ</span>
+                                            <span class="text-yellow-600"><i class="fas fa-circle mr-1"></i>離席中</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="プロフィール表示">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="メッセージ履歴">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <div class="relative">
+                                        <button class="text-gray-600 hover:text-gray-800 p-2 member-menu-btn" title="その他の操作">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 一般メンバー -->
+                            <div class="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-semibold text-lg">猫</span>
+                                        </div>
+                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <h4 class="font-semibold text-gray-800">猫さん</h4>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">一般メンバー</span>
+                                        </div>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                            <span><i class="fas fa-calendar mr-1"></i>参加日: 2024/03/10</span>
+                                            <span><i class="fas fa-comments mr-1"></i>234 メッセージ</span>
+                                            <span class="text-green-600"><i class="fas fa-circle mr-1"></i>オンライン</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="プロフィール表示">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="メッセージ履歴">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <div class="relative">
+                                        <button class="text-gray-600 hover:text-gray-800 p-2 member-menu-btn" title="その他の操作">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 他のメンバー例 -->
+                            <div class="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-semibold text-lg">読</span>
+                                        </div>
+                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-gray-500 border-2 border-white rounded-full"></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <h4 class="font-semibold text-gray-800">読者123</h4>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">一般メンバー</span>
+                                        </div>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                            <span><i class="fas fa-calendar mr-1"></i>参加日: 2024/04/05</span>
+                                            <span><i class="fas fa-comments mr-1"></i>45 メッセージ</span>
+                                            <span class="text-gray-500"><i class="fas fa-circle mr-1"></i>3時間前</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="プロフィール表示">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="メッセージ履歴">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <div class="relative">
+                                        <button class="text-gray-600 hover:text-gray-800 p-2 member-menu-btn" title="その他の操作">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-full flex items-center justify-center">
+                                            <span class="text-white font-semibold text-lg">作</span>
+                                        </div>
+                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <h4 class="font-semibold text-gray-800">作家の卵</h4>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">一般メンバー</span>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">作家</span>
+                                        </div>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                            <span><i class="fas fa-calendar mr-1"></i>参加日: 2024/05/12</span>
+                                            <span><i class="fas fa-comments mr-1"></i>78 メッセージ</span>
+                                            <span class="text-green-600"><i class="fas fa-circle mr-1"></i>オンライン</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="プロフィール表示">
+                                        <i class="fas fa-user"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800 p-2" title="メッセージ履歴">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <div class="relative">
+                                        <button class="text-gray-600 hover:text-gray-800 p-2 member-menu-btn" title="その他の操作">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ページネーション -->
+                        <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+                            <div class="text-sm text-gray-600">
+                                8人中 1-5人を表示
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="px-3 py-2 text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button>
+                                <button class="px-3 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">2</button>
+                                <button class="px-3 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- メンバー招待モーダル -->
+    <div id="invite-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">メンバーを招待</h3>
+                    <button class="text-gray-500 hover:text-gray-700" id="close-invite-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ユーザー名またはメールアドレス</label>
+                        <input type="text" placeholder="example@email.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">招待メッセージ（任意）</label>
+                        <textarea rows="3" placeholder="チャットルームに参加しませんか？" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="flex items-center justify-end space-x-3 pt-4">
+                        <button class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50" id="cancel-invite">
+                            キャンセル
+                        </button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            招待を送信
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

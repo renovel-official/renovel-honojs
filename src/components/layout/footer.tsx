@@ -6,7 +6,7 @@ export default function Footer() {
             <div class="container mx-auto px-4">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div>
-                        <h4 class="text-lg font-bold mb-4">NovelHub</h4>
+                        <h4 class="text-lg font-bold mb-4">ReNovel</h4>
                         <p class="text-gray-400 text-sm">
                             作家と読者をつなぐ小説投稿プラットフォーム
                         </p>
@@ -45,7 +45,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div class="border-t border-gray-700 mt-6 pt-6 text-center text-sm text-gray-400">
-                    <p>&copy; 2024 NovelHub. All rights reserved.</p>
+                    <p>&copy; 2024 tanahiro2010. All rights reserved.</p>
                 </div>
             </div>
         </footer>

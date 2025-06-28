@@ -18,7 +18,7 @@ interface RoomUser {
     id?: number;
     room_id: string;
     user_id: string;
-    is_admin: boolean;
+    is_admin: number;
     created_at: string;
 }
 

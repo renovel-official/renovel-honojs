@@ -1,6 +1,7 @@
 import MessageLog from "@/components/ui/author/messages/message";
 import AuthorTitle from "@/components/ui/author/title";
 import { Message, RoomResult } from "@/interfaces/messages";
+import { Settings } from "@/components/icons/google-icons";
 
 interface AuthorMessagesRoomProps {
     detail: RoomResult;
@@ -9,15 +10,29 @@ interface AuthorMessagesRoomProps {
 
 export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoomProps) {
     const { room, messages } = detail;
+    const user = detail.users.find((user) => user.user_id == userId) ?? { is_admin: 0 };
 
     return (
         <main class="flex flex-col h-screen bg-white p-5 rounded-md">
-            <AuthorTitle>{room.title}</AuthorTitle>
+            <AuthorTitle>
+                <div>
+                    {room.title}
+                </div>
+
+                {user?.is_admin >= 1 ? (
+                    <div class={`items-center text-xl text-black`}>
+                        <a href={`/author/messages/${room.slug}/setting`}>
+                            <Settings className="text-gray-600 hover:text-black" />
+                        </a>
+                    </div>
+                ) : null}
+
+            </AuthorTitle>
 
             <div class="flex-1 overflow-y-auto px-4 py-2" id="message-log">
                 {messages.length === 0 ? (
                     <div class="text-center text-gray-500 mt-10">
-                        <div class="text-xl sm:text-2xl mb-2">チャットルーム 「{ room.title }」へようこそ</div>
+                        <div class="text-xl sm:text-2xl mb-2">チャットルーム 「{room.title}」へようこそ</div>
                         <div class="text-sm">好きな小説、好きなアニメ、作家さん、なんでも好きな雑談を始めましょう</div>
                     </div>
                 ) : (
