@@ -21,10 +21,10 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
       }).slice(0, 10);
 
     return (
-        <main class="p-5 w-full">
-            <div class="flex items-center justify-between mb-6">
+        <main class="p-3 sm:p-5 w-full max-w-full overflow-x-hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                 <AuthorTitle>
-                    <div>
+                    <div class="flex items-center gap-2">
                         <a href={`/author/messages/${room.room.slug}`} class="text-gray-600 hover:text-gray-800 transition duration-300">
                             <i class="fas fa-arrow-left text-lg"></i>
                         </a>
@@ -32,8 +32,8 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
                         ルーム設定
                     </div>
                 </AuthorTitle>
-                <div class="bg-blue-50 px-3 py-1 rounded-full">
-                    <span class="text-blue-600 text-sm font-medium">
+                <div class="bg-blue-50 px-3 py-1 rounded-full w-fit">
+                    <span class="text-blue-600 text-sm font-medium break-words">
                         <i class="fas fa-users mr-1"></i>
                         { room.room.title }
                     </span>
@@ -41,12 +41,12 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
             </div>
 
             <div class="space-y-6">
-                <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                     <div class="flex items-center mb-4">
-                        <div class="bg-blue-100 p-2 rounded-full mr-3">
+                        <div class="bg-blue-100 p-2 rounded-full mr-3 flex-shrink-0">
                             <i class="fas fa-edit text-blue-600"></i>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800">ルーム名</h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800">ルーム名</h2>
                     </div>
                     <div class="space-y-4">
                         <div>
@@ -64,15 +64,15 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                     <div class="flex items-center mb-4">
-                        <div class="bg-green-100 p-2 rounded-full mr-3">
+                        <div class="hidden sm:block bg-green-100 p-2 rounded-full mr-3 flex-shrink-0">
                             <i class="fas fa-users text-green-600"></i>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800">メンバー管理</h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800">メンバー管理</h2>
                     </div>
                     <div class="space-y-4">
-                        <div class="space-y-3">
+                        <div class="space-y-3" id="members">
                             { sortedMembers.map((member) => {
                                 return <MemberBlock me={user.slug} username={member.user_id} role={member.is_admin}/>
                             }) }
@@ -80,11 +80,11 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
 
 
                         <div class="border-t pt-4">
-                            <div class="flex space-x-3">
+                            <div class="flex flex-col sm:flex-row gap-3">
                                 <input type="text"
                                     placeholder="ユーザー名を入力"
                                     class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">
+                                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 whitespace-nowrap">
                                         <i class="fas fa-plus mr-1"></i>追加
                                     </button>
                             </div>
@@ -92,18 +92,18 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                     <div class="flex items-center mb-4">
-                        <div class="bg-orange-100 p-2 rounded-full mr-3">
+                        <div class="bg-orange-100 p-2 rounded-full mr-3 flex-shrink-0">
                             <i class="fas fa-history text-orange-600"></i>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800">メッセージログ削除</h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800">メッセージログ削除</h2>
                     </div>
                     <div class="space-y-4">
                         <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
                             <div class="flex items-start space-x-3">
-                                <i class="fas fa-exclamation-triangle text-orange-600 mt-1"></i>
-                                <div>
+                                <i class="fas fa-exclamation-triangle text-orange-600 mt-1 flex-shrink-0"></i>
+                                <div class="min-w-0">
                                     <h3 class="font-medium text-orange-800 mb-1">注意事項</h3>
                                     <p class="text-sm text-orange-700">
                                         削除されたメッセージは復元できません。慎重に操作してください。
@@ -112,7 +112,7 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div class="border rounded-lg p-4">
                                 <h3 class="font-medium text-gray-800 mb-2">期間指定削除</h3>
                                 <div class="space-y-3">
@@ -144,18 +144,18 @@ export default function MessageSettings({ room, user }: MessageSettingsProps) {
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                     <div class="flex items-center mb-4">
-                        <div class="bg-red-100 p-2 rounded-full mr-3">
+                        <div class="bg-red-100 p-2 rounded-full mr-3 flex-shrink-0">
                             <i class="fas fa-trash text-red-600"></i>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800">ルーム削除</h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800">ルーム削除</h2>
                     </div>
                     <div class="space-y-4">
                         <div class="bg-red-50 border border-red-200 rounded-lg p-4">
                             <div class="flex items-start space-x-3">
-                                <i class="fas fa-exclamation-circle text-red-600 mt-1"></i>
-                                <div>
+                                <i class="fas fa-exclamation-circle text-red-600 mt-1 flex-shrink-0"></i>
+                                <div class="min-w-0">
                                     <h3 class="font-medium text-red-800 mb-1">危険な操作</h3>
                                     <p class="text-sm text-red-700">
                                         ルームを削除すると、全てのメッセージとメンバー情報が完全に削除されます。この操作は取り消せません。

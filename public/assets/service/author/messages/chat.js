@@ -2,6 +2,7 @@ const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
 const messageLog = document.querySelector('#message-log');
 const roomId = window.location.pathname.replace('/author/messages/', '');
+const audio = new Audio("/assets/audio/alert.mp3");
 
 /**
  * メッセージ受信時に実行する関数
@@ -138,8 +139,13 @@ function scroll() {
         channle.subscribe(msg => {
             const { data } = msg;
             const createdAt = formatJST(msg.createdAt);
+            const from = data.from;
 
-            addMessageLog(data.from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
+            addMessageLog(from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
+
+            if (from !== slug) {
+                audio.play();
+            }
 
             messageLog.scrollTo({
                 top: messageLog.scrollHeight,

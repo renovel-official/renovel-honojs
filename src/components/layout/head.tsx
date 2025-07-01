@@ -8,7 +8,7 @@ export default function Head({ title, description, image }: HeadProps) {
     return (
         <head>
             <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <title>{ title ?? "ReNovel | 小説家の卵を発掘する小説投稿サイト"}</title>
             <meta property="og:title" content={title ?? "ReNovel | 学生運営の小説投稿サイト"} />
             <meta property="og:description" content={description ?? "ReNovelは、新しい才能を発掘する小説投稿サイトです。あなたの物語を世界に届けましょう。"} />
