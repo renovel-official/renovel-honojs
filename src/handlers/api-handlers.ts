@@ -44,11 +44,12 @@ export default ((app: Hono<Env>) => {
     app.post('/api/v4/messages', createRoomHandler);
     app.get('/api/v4/messages/:roomId', getMessagesHandler);
     app.post('/api/v4/messages/:roomId', postMessagesHandler);
-    app.get('/api/v4/messages/:roomId/token', getMessageRealTimeTokenHandler);
+
+    app.get('/api/v5/ably/:roomId/auth', getMessageRealTimeTokenHandler);
     
-    app.get('/api/v5/search', );
-    app.get('/api/v5/ranking', );
-    app.get('/api/v5/blog', );
+    app.get('/api/v6/search', );
+    app.get('/api/v6/ranking', );
+    app.get('/api/v6/blog', );
     
     app.get('/api/utils/placeholder/:workId', placeholderHandler);
     

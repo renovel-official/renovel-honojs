@@ -1,9 +1,14 @@
 const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
 const messageLog = document.querySelector('#message-log');
+const startButton = document.querySelector('#start-meeting');
+
 const roomId = window.location.pathname.replace('/author/messages/', '');
 const audio = new Audio("/assets/audio/alert.mp3");
+const absoluteUrl = `//${window.location.host}`;
+const ABLY_AUTH_URL = `${absoluteUrl}/api/v5/ably/${roomId}/auth`;
 
+const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 /**
  * メッセージ受信時に実行する関数
  * @param { String } icon 
@@ -123,20 +128,21 @@ function scroll() {
         window.location.href = '/author/messages';
         return;
     }
-
-    const { location } = window;
-    const absoluteUrl = `//${location.host}`;
+    
     /**
      * @type {import('ably').Realtime}
      */
     const ably = new Ably.Realtime({
-        authUrl: `${absoluteUrl}/api/v4/messages/${roomId}/token`
+        authUrl: ABLY_AUTH_URL
     });
 
     ably.connection.once('connected', () => {
         const channle = ably.channels.get(`chat-${roomId}`);
         
-        channle.subscribe(msg => {
+        
+        channle.subscribe((payload) => {
+            const type = payload.name;
+
             const { data } = msg;
             const createdAt = formatJST(msg.createdAt);
             const from = data.from;
@@ -147,10 +153,7 @@ function scroll() {
                 audio.play();
             }
 
-            messageLog.scrollTo({
-                top: messageLog.scrollHeight,
-                behavior: 'smooth'
-            });
+            scroll();
         });
 
 
@@ -178,6 +181,14 @@ function scroll() {
             channle.publish('message', payload);
 
             return;
+        });
+
+        startButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            channle.publish('meeting', () => {
+
+            })
         });
     });
 

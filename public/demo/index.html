@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ably + WebRTC 複数人音声通話</title>
+<style>
+html, body { height: 100%; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #121212; color: white; }
+button { padding: 1em 2em; font-size: 1.2em; border-radius: 8px; border: none; cursor: pointer; background: #1e90ff; color: white; margin: 10px; }
+</style>
+</head>
+<body>
+<button id="joinButton">音声通話に参加</button>
+<script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+<script>
+const ROOM_ID = "webrtc-demo-room";
+const ABLY_AUTH_URL = "/ably-auth";
+const joinButton = document.getElementById('joinButton');
+const peers = {};
+const config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+joinButton.onclick = async () => {
+    joinButton.disabled = true;
+    joinButton.innerText = "接続中...";
+    const ably = new Ably.Realtime({ authUrl: ABLY_AUTH_URL });
+    const channel = ably.channels.get(ROOM_ID);
+    const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+    channel.presence.enter();
+    channel.presence.subscribe("enter", member => {
+        if (member.clientId !== ably.auth.clientId) connectToNewPeer(member.clientId, stream, channel);
+    });
+    const members = await new Promise(resolve => channel.presence.get((err, members) => resolve(members)));
+    members.forEach(member => {
+        if (member.clientId !== ably.auth.clientId) connectToNewPeer(member.clientId, stream, channel);
+    });
+    channel.subscribe("signal", async msg => {
+        const { from, to, data } = msg.data;
+        if (to !== ably.auth.clientId) return;
+        let pc = peers[from];
+        if (!pc) pc = await createPeerConnection(from, stream, channel);
+        if (data.type === "offer") {
+            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            channel.publish("signal", { from: ably.auth.clientId, to: from, data: { type: "answer", sdp: answer } });
+        } else if (data.type === "answer") {
+            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        } else if (data.type === "candidate") {
+            if (data.candidate) await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        }
+    });
+    joinButton.style.display = 'none';
+};
+
+async function connectToNewPeer(clientId, stream, channel) {
+    const pc = await createPeerConnection(clientId, stream, channel);
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    channel.publish("signal", { from: channel.connection.id, to: clientId, data: { type: "offer", sdp: offer } });
+}
+
+async function createPeerConnection(clientId, stream, channel) {
+    const pc = new RTCPeerConnection(config);
+    peers[clientId] = pc;
+    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+    pc.ontrack = event => {
+        const audio = new Audio();
+        audio.srcObject = event.streams[0];
+        audio.autoplay = true;
+    };
+    pc.onicecandidate = event => {
+        if (event.candidate) {
+            channel.publish("signal", { from: channel.connection.id, to: clientId, data: { type: "candidate", candidate: event.candidate } });
+        }
+    };
+    return pc;
+}
+</script>
+</body>
+</html>

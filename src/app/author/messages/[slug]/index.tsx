@@ -21,13 +21,21 @@ export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoo
                             {room.title}
                         </div>
 
-                        {user?.is_admin >= 1 ? (
-                            <div class="flex-shrink-0 ml-2">
+                        <div class="flex-shrink-0 ml-2 flex items-center space-x-1">
+                            <button
+                                class="flex items-center px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:text-black hover:border-gray-400 transition focus:outline-none"
+                                title="通話を始める"
+                                id="start-meeting"
+                            >
+                                <span class="text-lg">📞</span>
+                                <span class="ml-1 hidden sm:inline">通話</span>
+                            </button>
+                            {user?.is_admin >= 1 ? (
                                 <a href={`/author/messages/${room.slug}/setting`} class="block p-2">
                                     <Settings className="text-gray-600 hover:text-black w-5 h-5 sm:w-6 sm:h-6" />
                                 </a>
-                            </div>
-                        ) : null}
+                            ) : null}
+                        </div>
                     </div>
                 </AuthorTitle>
             </div>
@@ -35,7 +43,7 @@ export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoo
             <div class="flex-1 overflow-y-auto px-2 sm:px-4 py-2" id="message-log">
                 {messages.length === 0 ? (
                     <div class="text-center text-gray-500 mt-8 sm:mt-10 px-4">
-                        <div class="text-lg sm:text-xl lg:text-2xl mb-2">チャットルーム 「{ room.title }」へようこそ</div>
+                        <div class="text-lg sm:text-xl lg:text-2xl mb-2">チャットルーム 「{room.title}」へようこそ</div>
                         <div class="text-xs sm:text-sm">好きな小説、好きなアニメ、作家さん、なんでも好きな雑談を始めましょう</div>
                     </div>
                 ) : (
@@ -69,6 +77,7 @@ export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoo
             </div>
 
             <script src="/assets/service/author/messages/chat.default.js" defer></script>
+            <script src="/assets/service/author/messages/meeting.js" defer></script>
         </main>
     );
 }

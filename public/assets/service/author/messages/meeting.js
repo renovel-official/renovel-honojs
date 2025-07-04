@@ -1,8 +1,15 @@
-const roomId = window.location.pathname.replace('/author/messages/', '').replace('/meeting', '');
-const audio = new Audio("/assets/audio/alert.mp3");
+const startButton = document.querySelector('#start-meeting');
+const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+const absoluteUrl = window.location.origin;
 
-console.log(roomId);
+startButton.addEventListener('click', async () => {
+    /** @type { import('ably').Realtime } */
+    const ably = new Ably.Realtime({ authUrl: ABLY_AUTH_URL });
 
-await (async() => {
+    ably.connection.once('connected', () => {
+        
+    });
+});
 
-})();
+/** @type { import('ably').Realtime } */
+const ably = new Ably.Realtime({ authUrl: ABLY_AUTH_URL });

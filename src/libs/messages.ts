@@ -3,14 +3,14 @@ import { rooms, roomUsers, messages } from "@/db/d1";
 import { getUnixTimestamp, formatJST } from "@/utils/timestamp";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 import { bin2hex } from "@/utils/bin2hex";
-import { eq, asc, and, gt } from "drizzle-orm";
+import { eq, asc, and, gt, desc } from "drizzle-orm";
 
 async function getRooms(db: DrizzleD1Database, userId: string): Promise<Array<RoomResult>> {
     const getResult = await db.select().from(roomUsers).orderBy(asc(roomUsers.id)).where(eq(roomUsers.user_id, userId)).execute();
     const rooms = [];
 
     for (const roomUser of getResult) {
-        const room = await getRoomDetails(db, roomUser.room_id ?? "");
+        const room = await getRoomDetails(db, roomUser.room_id ?? "", 1);
 
         if (room) {
             rooms.push(room);
@@ -52,6 +52,7 @@ async function getRoomUsers(db: DrizzleD1Database, roomId: string): Promise<Arra
 async function getRoomMessages(
     db: DrizzleD1Database,
     roomId: string,
+    limit: number = 100,
     lastDate?: number
 ): Promise<Array<Message>> {
     const roomResult = await getRoom(db, roomId);
@@ -65,12 +66,15 @@ async function getRoomMessages(
         ? and(eq(messages.room_id, roomId), gt(messages.created_at, lastDate.toString()))
         : eq(messages.room_id, roomId);
 
-    const messagesResult = await db
+    const messagesResult = (await db
         .select()
         .from(messages)
         .where(whereClause)
-        .orderBy(asc(messages.created_at)) // id順ではなく、created_at順に
-        .execute();
+        .orderBy(desc(messages.created_at))
+        .limit(limit)
+        .execute()).sort((a, b) => {
+            return parseInt(a.created_at ?? "0") - parseInt(b.created_at ?? "0");
+        });
 
     return messagesResult.map((message) => ({
         id: message.id,
@@ -82,7 +86,7 @@ async function getRoomMessages(
     }));
 }
 
-async function getRoomDetails(db: DrizzleD1Database, roomId: string, lastDate?: number): Promise<RoomResult | null> {
+async function getRoomDetails(db: DrizzleD1Database, roomId: string, limit: number = 100): Promise<RoomResult | null> {
     const room = await getRoom(db, roomId);
 
     if (!room) {
@@ -90,7 +94,7 @@ async function getRoomDetails(db: DrizzleD1Database, roomId: string, lastDate?: 
     }
 
     const users = await getRoomUsers(db, roomId);
-    const messages = await getRoomMessages(db, roomId, lastDate);
+    const messages = await getRoomMessages(db, roomId, limit);
 
     return {
         room,

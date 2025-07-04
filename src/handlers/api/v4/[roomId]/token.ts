@@ -23,7 +23,8 @@ async function getMessageRealTimeTokenHandler(c: Context<Env>) {
 
     const tokenRequest = await ably.auth.createTokenRequest({
         capability: {
-            [`chat-${roomId}`]: ["subscribe", "publish"]
+            [`chat-${roomId}`]: ["subscribe", "publish"],
+            [`meeting-${roomId}`]: ["subscribe", "publish"]
         },
         clientId: user.email,
         ttl: 60 * 30 * 1000, // 30分
