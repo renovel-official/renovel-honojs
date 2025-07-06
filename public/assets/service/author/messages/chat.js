@@ -1,3 +1,6 @@
+const { timestamp } = require('drizzle-orm/gel-core');
+
+// 定数宣言
 const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
 const messageLog = document.querySelector('#message-log');
@@ -7,118 +10,36 @@ const roomId = window.location.pathname.replace('/author/messages/', '');
 const audio = new Audio("/assets/audio/alert.mp3");
 const absoluteUrl = `//${window.location.host}`;
 const ABLY_AUTH_URL = `${absoluteUrl}/api/v5/ably/${roomId}/auth`;
+const userId = uuid();
+const webRTC = new WebRTC();
 
-const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+// 変数
 /**
- * メッセージ受信時に実行する関数
- * @param { String } icon 
- * @param { String } authorId 
- * @param { String } content 
- * @param { String } createdAt 
+ * @type { boolean }
  */
-function addMessageLog(icon, authorId, content, createdAt) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('flex', 'items-start', 'space-x-3', 'p-4', 'border-b', 'border-gray-200');
-
-    const iconElement = document.createElement('div');
-    iconElement.classList.add('text-2xl');
-    iconElement.innerText = icon;
-
-    const mainContentElement = document.createElement('div');
-
-    const metaElement = document.createElement('div');
-    metaElement.classList.add('flex', 'items-baseline', 'space-x-2');
-
-    const authorIdElement = document.createElement('span');
-    authorIdElement.classList.add('font-semibold');
-    authorIdElement.innerText = authorId;
-
-    const dateElement = document.createElement('span');
-    dateElement.classList.add('text-xs', 'text-gray-500');
-    dateElement.innerText = createdAt;
-
-    metaElement.appendChild(authorIdElement);
-    metaElement.appendChild(dateElement);
-    mainContentElement.appendChild(metaElement);
-
-    const contentElement = document.createElement('div');
-    contentElement.classList.add('mt-1', 'text-gray-700');
-    contentElement.innerText = content;
-
-    mainContentElement.appendChild(contentElement);
-
-    messageElement.appendChild(iconElement);
-    messageElement.appendChild(mainContentElement);
-
-    messageLog.appendChild(messageElement);
-
-    scroll();
-}
-
-function formatJST(ms) {
-    const date = new Date(ms);
-    return date.toLocaleString();
-}
-
+let connectedVC = false;
 /**
- * @param { string } content 
- * @returns { Record<string, string> } メッセージオブジェクトを返します
+ * @type { boolean }
  */
-
-async function sendMessageLog(content) {
-    try {
-        const response = await fetch(`/api/v4/messages/${roomId}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                content
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const result = await response.json();
-
-        if (!result.success) {
-            throw new Error(result.message);
-        }
-
-        return result.data;
-    } catch (e) {
-        console.error(e);
-        alert('メッセージの送信に失敗しました');
-
-        return null;
-    }
-}
+let isHost = false;
 /**
- * @returns { string | null } - 自身のslugを返します
+ * @type { number }
  */
-async function connect() {
-    try {
-        const response = await fetch('/api/v1/session');
-        const data = await response.json();
-    
-        if (data.success) {
-            return data.data.user.slug;
-        } else {
-            return null;
-        }
-    } catch {
-        return null;
-    }
-    
-}
-
-
-function scroll() {
-    messageLog.scrollTo({
-        top: messageLog.scrollHeight,
-        behavior: 'smooth'
-    });
-}
+let tryConnectedTimestamp = 0;
+/**
+ * @type { number | null }
+ */
+let meetingJoinTimeout = null;
+/**
+ * @type { boolean }
+ */
+let meetingJoinResponseReceived = false;
 
 // 初期関数
-(() => scroll())();
+(() => {
+    console.log('Your user id: ', userId);
+    scroll();
+})();
 
 (async () => {
     const slug = await connect();
@@ -140,20 +61,58 @@ function scroll() {
         const channle = ably.channels.get(`chat-${roomId}`);
         
         
-        channle.subscribe((payload) => {
+        channle.subscribe(async (payload) => {
             const type = payload.name;
+            const data = payload.data;
+            console.log('name: ', type);
+            console.log('data: ', data);
 
-            const { data } = msg;
-            const createdAt = formatJST(msg.createdAt);
-            const from = data.from;
+            switch (type) {
+                case 'message':
+                    const createdAt = formatJST(payload.createdAt);
+                    const from = data.from;
+        
+                    addMessageLog(messageLog, from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
+        
+                    if (from !== slug) {
+                        audio.play();
+                    }
+        
+                    scroll();
+                    break;
 
-            addMessageLog(from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
+                case 'meeting-join':
+                    console.log('request id: ', data.id);
+                    const isMineRequest = data.id === userId && data.timestamp === tryConnectedTimestamp;
+                    console.log('Mine Request: ', isMineRequest);
+                    
+                    // 自分が送信したmeeting-joinに対する返信かチェック
+                    if (isMineRequest) {
+                        // 5秒待機
+                        await new Promise(resolve => setTimeout(resolve, 5000));
+                        if (connectedVC) {
+                            addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
+                        } else {
+                            
+                        }
+                    } else {
+                        if (connectedVC && isHost) { // 既にVCに接続している && ホストなら
+                            const payload = {
+                                from: 'system',
+                                content: '新規ユーザーへの接続支援を開始...',
 
-            if (from !== slug) {
-                audio.play();
+                                id: userId,
+                                to: data.id,
+                                sdp: "",
+                                timestamp: getUnixTimestamp()
+                            };
+                        }
+                    }
+                    break;
+
             }
 
-            scroll();
+            
         });
 
 
@@ -185,10 +144,27 @@ function scroll() {
 
         startButton.addEventListener('click', async (e) => {
             e.preventDefault();
+            
+            // 前回のタイマーをクリア
+            if (meetingJoinTimeout) {
+                clearTimeout(meetingJoinTimeout);
+                meetingJoinTimeout = null;
+            }
+            
+            // 返信フラグをリセット
+            meetingJoinResponseReceived = false;
+            
+            tryConnectedTimestamp = getUnixTimestamp();
+            const payload = {
+                // message
+                from: 'system',
+                content: 'VC要求。接続開始...',
 
-            channle.publish('meeting', () => {
+                id: userId,
+                timestamp: tryConnectedTimestamp
+            }
 
-            })
+            channle.publish('meeting-join', payload);
         });
     });
 
@@ -196,4 +172,3 @@ function scroll() {
         console.log('Ably connection state:', stateChange);
     });
 })();
-

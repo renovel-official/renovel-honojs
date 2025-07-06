@@ -35,7 +35,7 @@ export default function Head({ title, description, image }: HeadProps) {
             <meta name="robots" content="index, follow" />
             <link rel="icon" href="/favicon.ico" />
 
-            
+            <script src="/assets/service/utils.js"></script>
 
         </head>
     )

@@ -76,8 +76,8 @@ export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoo
                 </div>
             </div>
 
+            <script src="/assets/service/libs/webrtc.js" defer></script>
             <script src="/assets/service/author/messages/chat.default.js" defer></script>
-            <script src="/assets/service/author/messages/meeting.js" defer></script>
         </main>
     );
 }
