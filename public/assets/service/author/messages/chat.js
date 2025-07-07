@@ -1,5 +1,3 @@
-const { timestamp } = require('drizzle-orm/gel-core');
-
 // 定数宣言
 const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
@@ -26,14 +24,6 @@ let isHost = false;
  * @type { number }
  */
 let tryConnectedTimestamp = 0;
-/**
- * @type { number | null }
- */
-let meetingJoinTimeout = null;
-/**
- * @type { boolean }
- */
-let meetingJoinResponseReceived = false;
 
 // 初期関数
 (() => {
@@ -93,19 +83,28 @@ let meetingJoinResponseReceived = false;
                         if (connectedVC) {
                             addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
                         } else {
+                            // TODO: 通話ルームを作成する処理を以下に
                             
                         }
                     } else {
-                        if (connectedVC && isHost) { // 既にVCに接続している && ホストなら
-                            const payload = {
-                                from: 'system',
-                                content: '新規ユーザーへの接続支援を開始...',
+                        if (connectedVC) {
+                            if (isHost) {
+                                const payload = {
+                                    id: userId,
+                                    to: data.id,
+                                    sdp: "",
+                                    timestamp: getUnixTimestamp()
+                                }
 
-                                id: userId,
-                                to: data.id,
-                                sdp: "",
-                                timestamp: getUnixTimestamp()
-                            };
+                                await channle.publish('meeting-join', payload);
+                            }
+                        } else {
+                            const { to } = data;
+
+                            if (to === userId) { // 自分宛か確認
+                                // TODO: 接続処理を以下に
+
+                            }
                         }
                     }
                     break;
@@ -145,15 +144,6 @@ let meetingJoinResponseReceived = false;
         startButton.addEventListener('click', async (e) => {
             e.preventDefault();
             
-            // 前回のタイマーをクリア
-            if (meetingJoinTimeout) {
-                clearTimeout(meetingJoinTimeout);
-                meetingJoinTimeout = null;
-            }
-            
-            // 返信フラグをリセット
-            meetingJoinResponseReceived = false;
-            
             tryConnectedTimestamp = getUnixTimestamp();
             const payload = {
                 // message
@@ -164,7 +154,7 @@ let meetingJoinResponseReceived = false;
                 timestamp: tryConnectedTimestamp
             }
 
-            channle.publish('meeting-join', payload);
+            await channle.publish('meeting-join', payload);
         });
     });
 

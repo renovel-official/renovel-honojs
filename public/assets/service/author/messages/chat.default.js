@@ -1,5 +1,3 @@
-const { timestamp } = require('drizzle-orm/gel-core');
-
 // 定数宣言
 const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
