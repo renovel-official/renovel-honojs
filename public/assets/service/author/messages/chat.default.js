@@ -24,14 +24,6 @@ let isHost = false;
  * @type { number }
  */
 let tryConnectedTimestamp = 0;
-/**
- * @type { number | null }
- */
-let meetingJoinTimeout = null;
-/**
- * @type { boolean }
- */
-let meetingJoinResponseReceived = false;
 
 // 初期関数
 (() => {
@@ -47,7 +39,7 @@ let meetingJoinResponseReceived = false;
         window.location.href = '/author/messages';
         return;
     }
-    
+
     /**
      * @type {import('ably').Realtime}
      */
@@ -57,62 +49,116 @@ let meetingJoinResponseReceived = false;
 
     ably.connection.once('connected', () => {
         const channle = ably.channels.get(`chat-${roomId}`);
-        
-        
-        channle.subscribe(async (payload) => {
-            const type = payload.name;
-            const data = payload.data;
-            console.log('name: ', type);
-            console.log('data: ', data);
 
-            switch (type) {
-                case 'message':
-                    const createdAt = formatJST(payload.createdAt);
-                    const from = data.from;
-        
-                    addMessageLog(messageLog, from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
-        
-                    if (from !== slug) {
-                        audio.play();
-                    }
-        
-                    scroll();
-                    break;
-
-                case 'meeting-join':
-                    console.log('request id: ', data.id);
-                    const isMineRequest = data.id === userId && data.timestamp === tryConnectedTimestamp;
-                    console.log('Mine Request: ', isMineRequest);
-                    
-                    // 自分が送信したmeeting-joinに対する返信かチェック
-                    if (isMineRequest) {
-                        // 5秒待機
-                        await new Promise(resolve => setTimeout(resolve, 5000));
-                        if (connectedVC) {
-                            addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
-                        } else {
-                            
-                        }
-                    } else {
-                        if (connectedVC && isHost) { // 既にVCに接続している && ホストなら
-                            const payload = {
-                                from: 'system',
-                                content: '新規ユーザーへの接続支援を開始...',
-
-                                id: userId,
-                                to: data.id,
-                                sdp: "",
-                                timestamp: getUnixTimestamp()
-                            };
-                        }
-                    }
-                    break;
-
-            }
-
-            
+        channle.subscribe((payload) => {
+            console.log("Type: ", payload.name);
+            console.log("data: ", payload.data);
         });
 
+
+        channle.subscribe('message', async (payload) => {
+            const { data } = payload;
+
+            const createdAt = formatJST(payload.createdAt);
+            const from = data.from;
+
+            addMessageLog(messageLog, from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
+
+            if (from !== slug) {
+                audio.play();
+            }
+
+            scroll();
+        });
+
+        channle.subscribe('meeting-join', async (payload) => {
+            const { data } = payload;
+
+            // 1. 自分がmeeting-joinを送った本人か？
+            const isMineRequest = data.id === userId && data.timestamp === tryConnectedTimestamp;
+
+            if (isMineRequest) {
+                // 5秒待機
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                if (connectedVC) {
+                    addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
+                } else {
+                    // まだ誰もホストでなければ自分がホストになる
+                    isHost = true;
+                    connectedVC = true;
+                    addMessageLog(messageLog, '⚠️', 'system', 'ホストとして通話ルームを作成します');
+                    // Offer作成
+                    const offer = await webRTC.createOffer();
+                    await channle.publish('webrtc-offer', {
+                        from: userId,
+                        to: data.id, // 追加: 誰宛か明示
+                        offer,
+                        timestamp: getUnixTimestamp()
+                    });
+                }
+            } else {
+                // 2. 他人のmeeting-joinを受け取った場合
+                if (isHost && connectedVC) {
+                    // 自分がホストなら、相手にOfferを送る
+                    if (data.to === userId || !data.to) { // toが自分宛、または未指定なら
+                        const offer = await webRTC.createOffer();
+                        await channle.publish('webrtc-offer', {
+                            from: userId,
+                            to: data.id, // 参加者のID
+                            offer,
+                            timestamp: getUnixTimestamp()
+                        });
+                    }
+                } else {
+                    // 自分がクライアントの場合
+                    if (data.to === userId) {
+                        connectedVC = true;
+                        addMessageLog(messageLog, '⚠️', 'system', 'ホストに接続要求を送信します');
+                        // Offer受信を待つ
+                    }
+                }
+            }
+        })
+
+        // WebRTCシグナリング
+        channle.subscribe('webrtc-offer', async (payload) => {
+            // toが自分宛でなければ無視
+            if (payload.data.to !== userId) return;
+            if (payload.data.from === userId) return; // 自分のは無視
+
+            // クライアント側: Offerを受け取ったらAnswerを返す
+            await webRTC.setRemoteDescription(payload.data.offer);
+            const answer = await webRTC.createAnswer();
+            await channle.publish('webrtc-answer', {
+                from: userId,
+                to: payload.data.from, // ホスト宛
+                answer,
+                timestamp: getUnixTimestamp()
+            });
+        });
+
+        channle.subscribe('webrtc-answer', async (payload) => {
+            // toが自分宛でなければ無視
+            if (payload.data.to !== userId) return;
+            if (payload.data.from === userId) return;
+
+            // ホスト側: Answerを受け取ったらセット
+            await webRTC.setRemoteDescription(payload.data.answer);
+        });
+
+        // ICE candidateのやりとり
+        webRTC.onIceCandidate = async (candidate) => {
+            await channle.publish('webrtc-candidate', {
+                from: userId,
+                candidate,
+                timestamp: getUnixTimestamp()
+            });
+        };
+
+        channle.subscribe('webrtc-candidate', async (payload) => {
+            if (payload.data.from === userId) return;
+            await webRTC.addIceCandidate(payload.data.candidate);
+        });
 
         sendButton.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -142,16 +188,7 @@ let meetingJoinResponseReceived = false;
 
         startButton.addEventListener('click', async (e) => {
             e.preventDefault();
-            
-            // 前回のタイマーをクリア
-            if (meetingJoinTimeout) {
-                clearTimeout(meetingJoinTimeout);
-                meetingJoinTimeout = null;
-            }
-            
-            // 返信フラグをリセット
-            meetingJoinResponseReceived = false;
-            
+
             tryConnectedTimestamp = getUnixTimestamp();
             const payload = {
                 // message
@@ -162,7 +199,7 @@ let meetingJoinResponseReceived = false;
                 timestamp: tryConnectedTimestamp
             }
 
-            channle.publish('meeting-join', payload);
+            await channle.publish('meeting-join', payload);
         });
     });
 

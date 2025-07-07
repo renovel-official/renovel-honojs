@@ -3,13 +3,14 @@ const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
 const messageLog = document.querySelector('#message-log');
 const startButton = document.querySelector('#start-meeting');
+const localAudio = document.querySelector('#localAudio');
+const remoteAudio = document.querySelector('#remoteAudio');
 
 const roomId = window.location.pathname.replace('/author/messages/', '');
 const audio = new Audio("/assets/audio/alert.mp3");
 const absoluteUrl = `//${window.location.host}`;
 const ABLY_AUTH_URL = `${absoluteUrl}/api/v5/ably/${roomId}/auth`;
 const userId = uuid();
-const webRTC = new WebRTC();
 
 // 変数
 /**
@@ -24,6 +25,37 @@ let isHost = false;
  * @type { number }
  */
 let tryConnectedTimestamp = 0;
+/**
+ * @type { undefined | RTCPeerConnection }
+ */
+let peer;
+/**
+ * @type { undefined | MediaStream }
+ */
+let localStream;
+
+/**
+ * 
+ * @param { import('ably').RealtimeChannel } channel 
+ */
+async function meetingLoop(channel) {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    localAudio.srcObject = localStream;
+
+    localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
+
+    peer.onicecandidate = ({ candidate }) => {
+        if (candidate) {
+            channel.publish('candidate', { id: userId, candidate });
+        }
+    };
+
+    peer.ontrack = ({ streams }) => {
+        remoteAudio.srcObject = streams[0];
+    };
+
+}
+
 
 // 初期関数
 (() => {
@@ -39,7 +71,7 @@ let tryConnectedTimestamp = 0;
         window.location.href = '/author/messages';
         return;
     }
-    
+
     /**
      * @type {import('ably').Realtime}
      */
@@ -49,71 +81,63 @@ let tryConnectedTimestamp = 0;
 
     ably.connection.once('connected', () => {
         const channle = ably.channels.get(`chat-${roomId}`);
-        
-        
-        channle.subscribe(async (payload) => {
-            const type = payload.name;
-            const data = payload.data;
-            console.log('name: ', type);
-            console.log('data: ', data);
 
-            switch (type) {
-                case 'message':
-                    const createdAt = formatJST(payload.createdAt);
-                    const from = data.from;
-        
-                    addMessageLog(messageLog, from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
-        
-                    if (from !== slug) {
-                        audio.play();
-                    }
-        
-                    scroll();
-                    break;
-
-                case 'meeting-join':
-                    console.log('request id: ', data.id);
-                    const isMineRequest = data.id === userId && data.timestamp === tryConnectedTimestamp;
-                    console.log('Mine Request: ', isMineRequest);
-                    
-                    // 自分が送信したmeeting-joinに対する返信かチェック
-                    if (isMineRequest) {
-                        // 5秒待機
-                        await new Promise(resolve => setTimeout(resolve, 5000));
-                        if (connectedVC) {
-                            addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
-                        } else {
-                            // TODO: 通話ルームを作成する処理を以下に
-                            
-                        }
-                    } else {
-                        if (connectedVC) {
-                            if (isHost) {
-                                const payload = {
-                                    id: userId,
-                                    to: data.id,
-                                    sdp: "",
-                                    timestamp: getUnixTimestamp()
-                                }
-
-                                await channle.publish('meeting-join', payload);
-                            }
-                        } else {
-                            const { to } = data;
-
-                            if (to === userId) { // 自分宛か確認
-                                // TODO: 接続処理を以下に
-
-                            }
-                        }
-                    }
-                    break;
-
-            }
-
-            
+        channle.subscribe((payload) => {
+            console.log("Type: ", payload.name);
+            console.log("data: ", payload.data);
         });
 
+        channle.subscribe('message', async (payload) => {
+            const { data } = payload;
+
+            const createdAt = formatJST(payload.createdAt);
+            const from = data.from;
+
+            addMessageLog(messageLog, from === slug ? '👤' : '👥', data.from, data.content, (createdAt));
+
+            if (from !== slug) {
+                audio.play();
+            }
+
+            scroll();
+        });
+
+        channle.subscribe('meeting-join', async (payload) => {
+            const { data } = payload;
+
+            // 1. 自分がmeeting-joinを送った本人か？
+            const isMineRequest = data.id === userId && data.timestamp === tryConnectedTimestamp;
+
+            if (isMineRequest) {
+                // 5秒待機
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                if (connectedVC) {
+                    addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
+                } else {
+                    // まだ誰もホストでなければ自分がホストになる
+                    isHost = true;
+                    connectedVC = true;
+                    addMessageLog(messageLog, '⚠️', 'system', 'ホストとして通話ルームを作成します');
+
+                    peer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+
+                    await meetingLoop();
+                }
+            } else {
+                // 2. 他人のmeeting-joinを受け取った場合
+                if (isHost && connectedVC) {
+                    // 自分がホストなら、相手にOfferを送る
+
+                } else {
+                    // 自分がクライアントの場合
+                    if (data.to === userId) {
+                        connectedVC = true;
+                        addMessageLog(messageLog, '⚠️', 'system', 'ホストに接続要求を送信します');
+                        // Offer受信を待つ
+                    }
+                }
+            }
+        });
 
         sendButton.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -143,7 +167,7 @@ let tryConnectedTimestamp = 0;
 
         startButton.addEventListener('click', async (e) => {
             e.preventDefault();
-            
+
             tryConnectedTimestamp = getUnixTimestamp();
             const payload = {
                 // message

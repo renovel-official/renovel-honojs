@@ -30,6 +30,9 @@ export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoo
                                 <span class="text-lg">📞</span>
                                 <span class="ml-1 hidden sm:inline">通話</span>
                             </button>
+                            <audio id="localAudio" autoplay muted></audio>
+                            <audio id="remoteAudio" autoplay></audio>
+                            
                             {user?.is_admin >= 1 ? (
                                 <a href={`/author/messages/${room.slug}/setting`} class="block p-2">
                                     <Settings className="text-gray-600 hover:text-black w-5 h-5 sm:w-6 sm:h-6" />
