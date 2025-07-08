@@ -80,6 +80,7 @@ async function sendMessageLog(content) {
         return null;
     }
 }
+
 /**
  * @returns { string | null } - 自身のslugを返します
  */

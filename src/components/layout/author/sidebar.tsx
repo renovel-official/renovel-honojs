@@ -13,7 +13,7 @@ export default function Sidebar() {
                 <SidebarOption href="/api/v1/logout?location=/" icon="fa-sign-out-alt" text="ログアウト" color="red" />
             </nav>
 
-            <script src="/assets/service/author/sidebar.js"></script>
+            <script src="/assets/service/author/sidebar.default.js"></script>
         </div>
     );
 }

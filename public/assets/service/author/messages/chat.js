@@ -3,6 +3,7 @@ const sendButton = document.querySelector('#send');
 const messageBox = document.querySelector('#message');
 const messageLog = document.querySelector('#message-log');
 const startButton = document.querySelector('#start-meeting');
+const meetingLabel = document.querySelector('#meeting-label');
 const localAudio = document.querySelector('#localAudio');
 const remoteAudio = document.querySelector('#remoteAudio');
 
@@ -40,7 +41,6 @@ let localStream;
  * @param { import('ably').RealtimeChannel } channel 
  */
 async function meetingLoop(channel) {
-    startButton.innerText = "接続中...";
     startButton.type = "close";
     peer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
 
@@ -59,6 +59,30 @@ async function meetingLoop(channel) {
         remoteAudio.srcObject = streams[0];
     };
 
+}
+/**
+ * 
+ * @param { import('ably').RealtimeChannel } channel 
+ * @param { String }                         slug
+ */
+async function meetingClose(channel, slug) {
+    connectedVC = false;
+
+    peer.close();
+    startButton.dataset.type = 'start';
+    meetingLabel.innerHTML = '通話';
+
+    await channel.publish('message', { from: "system", content: `${slug}が退出しました` });
+
+    if (isHost) {
+        const content = 'ホストが退出したため、ミーティングが終了しました';
+        await channel.publish('meeting-close', { id: userId });
+        await channel.publish('message', { from: 'system', content });
+        await sendMessageLog(content);
+    }
+
+    peer = undefined;
+    isHost = false;
 }
 
 
@@ -85,14 +109,14 @@ async function meetingLoop(channel) {
     });
 
     ably.connection.once('connected', () => {
-        const channle = ably.channels.get(`chat-${roomId}`);
+        const channel = ably.channels.get(`chat-${roomId}`);
 
-        channle.subscribe((payload) => {
+        channel.subscribe((payload) => {
             console.log("Type: ", payload.name);
             console.log("data: ", payload.data);
         });
 
-        channle.subscribe('message', async (payload) => {
+        channel.subscribe('message', async (payload) => {
             const { data } = payload;
 
             const createdAt = formatJST(payload.createdAt);
@@ -107,7 +131,7 @@ async function meetingLoop(channel) {
             scroll();
         });
 
-        channle.subscribe('meeting-join', async (payload) => {
+        channel.subscribe('meeting-join', async (payload) => {
             const { data } = payload;
 
             // 1. 自分がmeeting-joinを送った本人か？
@@ -116,21 +140,31 @@ async function meetingLoop(channel) {
             if (isMineRequest) {
                 // 5秒待機
                 await new Promise(resolve => setTimeout(resolve, SLEEP_TIME));
+                const content = `${slug}が通話を始めました`;
                 const payload = {
                     from: 'system',
-                    content: `${slug}が通話を始めました`
+                    content
                 }
+
+                await sendMessageLog(content);
+
                 if (connectedVC) {
                     addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
                     payload.content = `${slug}が通話に参加しました`;
+
+                    meetingLabel.innerText = "リスナー";
                 } else {
                     // まだ誰もホストでなければ自分がホストになる
                     addMessageLog(messageLog, '⚠️', 'system', 'ホストとして通話ルームを作成します');
                     isHost = true;
                     connectedVC = true;
+
+                    meetingLabel.innerText = "ホスト";
                 }
 
-                await channle.publish('message', payload);
+                startButton.dataset.type = "close";
+
+                await channel.publish('message', payload);
             } else {
                 // 2. 他人のmeeting-joinを受け取った場合
                 if (isHost && connectedVC) {
@@ -149,12 +183,12 @@ async function meetingLoop(channel) {
                         answer
                     }
 
-                    await channle.publish('meeting-answer', payload);
+                    await channel.publish('meeting-answer', payload);
                 }
             }
         });
 
-        channle.subscribe('meeting-answer', async (payload) => {
+        channel.subscribe('meeting-answer', async (payload) => {
             const { data } = payload;
 
             if (data.to === userId) {
@@ -166,14 +200,20 @@ async function meetingLoop(channel) {
             }
         });
 
-        channle.subscribe('meeting-candidate', async (payload) => {
+        channel.subscribe('meeting-candidate', async (payload) => {
             const { id, candidate } = payload.data;
 
             if (id !== userId) {
                 await peer.addIceCandidate(new RTCIceCandidate(candidate));
             }
-            
+
         });
+
+        channel.subscribe('meeting-close', async (payload) => {
+            const { id } = payload.data;
+
+            if (id !== userId) await meetingClose(channel, slug);
+        })
 
         sendButton.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -196,36 +236,37 @@ async function meetingLoop(channel) {
 
             messageBox.value = "";
 
-            channle.publish('message', payload);
+            channel.publish('message', payload);
 
             return;
         });
 
         startButton.addEventListener('click', async (e) => {
+            console.log('Click');
             e.preventDefault();
-            const { type } = startButton;
+            const type = startButton.dataset.type;
+            console.log(type);
 
             if (type === "start") {
+                meetingLabel.innerText = "接続中...";
+
                 tryConnectedTimestamp = getUnixTimestamp();
-                await meetingLoop(channle);
+                await meetingLoop(channel);
                 const offer = await peer.createOffer();
                 peer.setLocalDescription(offer);
-    
+
                 const payload = {
                     // message
                     from: slug,
-    
+
                     id: userId,
                     offer,
                     timestamp: tryConnectedTimestamp
                 }
-    
-                await channle.publish('meeting-join', payload);
-            } else if (type === "close") {
-                connectedVC = false;
-                peer.close();
 
-                await channle.publish('message', { from: "system", content: `${slug}が退出しました` });
+                await channel.publish('meeting-join', payload);
+            } else if (type === "close") {
+                await meetingClose(channel, slug);
             }
         });
     });
