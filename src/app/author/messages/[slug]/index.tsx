@@ -26,6 +26,7 @@ export default function AuthorMessagesRoom({ detail, userId }: AuthorMessagesRoo
                                 class="flex items-center px-3 py-1 rounded border border-gray-300 bg-white text-gray-700 hover:text-black hover:border-gray-400 transition focus:outline-none"
                                 title="通話を始める"
                                 id="start-meeting"
+                                data="start"
                             >
                                 <span class="text-lg">📞</span>
                                 <span class="ml-1 hidden sm:inline">通話</span>

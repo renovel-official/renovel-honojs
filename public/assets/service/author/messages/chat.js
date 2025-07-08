@@ -11,6 +11,7 @@ const audio = new Audio("/assets/audio/alert.mp3");
 const absoluteUrl = `//${window.location.host}`;
 const ABLY_AUTH_URL = `${absoluteUrl}/api/v5/ably/${roomId}/auth`;
 const userId = uuid();
+const SLEEP_TIME = 3 * 1000; // 3秒
 
 // 変数
 /**
@@ -39,6 +40,10 @@ let localStream;
  * @param { import('ably').RealtimeChannel } channel 
  */
 async function meetingLoop(channel) {
+    startButton.innerText = "接続中...";
+    startButton.type = "close";
+    peer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+
     localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     localAudio.srcObject = localStream;
 
@@ -46,7 +51,7 @@ async function meetingLoop(channel) {
 
     peer.onicecandidate = ({ candidate }) => {
         if (candidate) {
-            channel.publish('candidate', { id: userId, candidate });
+            channel.publish('meeting-candidate', { id: userId, candidate });
         }
     };
 
@@ -110,33 +115,64 @@ async function meetingLoop(channel) {
 
             if (isMineRequest) {
                 // 5秒待機
-                await new Promise(resolve => setTimeout(resolve, 5000));
+                await new Promise(resolve => setTimeout(resolve, SLEEP_TIME));
+                const payload = {
+                    from: 'system',
+                    content: `${slug}が通話を始めました`
+                }
                 if (connectedVC) {
                     addMessageLog(messageLog, '⚠️', 'system', '接続完了しました');
+                    payload.content = `${slug}が通話に参加しました`;
                 } else {
                     // まだ誰もホストでなければ自分がホストになる
+                    addMessageLog(messageLog, '⚠️', 'system', 'ホストとして通話ルームを作成します');
                     isHost = true;
                     connectedVC = true;
-                    addMessageLog(messageLog, '⚠️', 'system', 'ホストとして通話ルームを作成します');
-
-                    peer = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-
-                    await meetingLoop();
                 }
+
+                await channle.publish('message', payload);
             } else {
                 // 2. 他人のmeeting-joinを受け取った場合
                 if (isHost && connectedVC) {
-                    // 自分がホストなら、相手にOfferを送る
+                    addMessageLog(messageLog, '⚠️', 'system', `${data.from}が接続しようとしています...`);
+                    const offer = new RTCSessionDescription(data.offer);
+                    await peer.setRemoteDescription(offer);
 
-                } else {
-                    // 自分がクライアントの場合
-                    if (data.to === userId) {
-                        connectedVC = true;
-                        addMessageLog(messageLog, '⚠️', 'system', 'ホストに接続要求を送信します');
-                        // Offer受信を待つ
+                    const answer = await peer.createAnswer();
+                    await peer.setLocalDescription(answer);
+
+                    const payload = {
+                        from: slug,
+                        id: userId,
+                        to: data.id,
+
+                        answer
                     }
+
+                    await channle.publish('meeting-answer', payload);
                 }
             }
+        });
+
+        channle.subscribe('meeting-answer', async (payload) => {
+            const { data } = payload;
+
+            if (data.to === userId) {
+                addMessageLog(messageLog, '⚠️', 'system', `${data.from}が接続を許可しました...`);
+                const { answer } = data;
+                await peer.setRemoteDescription(new RTCSessionDescription(answer));
+
+                connectedVC = true;
+            }
+        });
+
+        channle.subscribe('meeting-candidate', async (payload) => {
+            const { id, candidate } = payload.data;
+
+            if (id !== userId) {
+                await peer.addIceCandidate(new RTCIceCandidate(candidate));
+            }
+            
         });
 
         sendButton.addEventListener('click', async (e) => {
@@ -167,18 +203,30 @@ async function meetingLoop(channel) {
 
         startButton.addEventListener('click', async (e) => {
             e.preventDefault();
+            const { type } = startButton;
 
-            tryConnectedTimestamp = getUnixTimestamp();
-            const payload = {
-                // message
-                from: 'system',
-                content: 'VC要求。接続開始...',
+            if (type === "start") {
+                tryConnectedTimestamp = getUnixTimestamp();
+                await meetingLoop(channle);
+                const offer = await peer.createOffer();
+                peer.setLocalDescription(offer);
+    
+                const payload = {
+                    // message
+                    from: slug,
+    
+                    id: userId,
+                    offer,
+                    timestamp: tryConnectedTimestamp
+                }
+    
+                await channle.publish('meeting-join', payload);
+            } else if (type === "close") {
+                connectedVC = false;
+                peer.close();
 
-                id: userId,
-                timestamp: tryConnectedTimestamp
+                await channle.publish('message', { from: "system", content: `${slug}が退出しました` });
             }
-
-            await channle.publish('meeting-join', payload);
         });
     });
 
