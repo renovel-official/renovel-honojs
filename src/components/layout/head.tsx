@@ -35,6 +35,12 @@ export default function Head({ title, description, image }: HeadProps) {
             <meta name="robots" content="index, follow" />
             <link rel="icon" href="/favicon.ico" />
 
+            {/* Apple用metaタグ */}
+            <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+            <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+            <meta name="apple-mobile-web-app-title" content={title ?? "ReNovel"} />
+
             <script src="/assets/service/utils.js"></script>
 
         </head>
