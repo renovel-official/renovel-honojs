@@ -19,11 +19,14 @@ export const AuthorLayout = jsxRenderer(async ({ children }, c: Context<Env>) =>
     const token = getCookie(c, 's-token') ?? "";
     const session = await getSession(db, token);
     const login = session ? true : false;
+    const uri = new URL(c.req.url);
+    const host = uri.origin;
+    
     const { title, description, image } = c.get('meta');
 
     return (
         <html>
-            <Head title={title} description={description} image={image} />
+            <Head host={host} title={title} description={description} image={image} />
 
             <body class={`bg-gray-100 text-gray-800`}>
                 { /** ヘッダー */}
