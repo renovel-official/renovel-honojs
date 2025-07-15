@@ -1,7 +1,7 @@
 import { DrizzleD1Database } from "drizzle-orm/d1";
 import { getUnixTimestamp } from "@/utils/timestamp"; // 現在のUnixタイムスタンプを取得するユーティリティ関数
 import { sessions } from "@/db/d1"; // セッションテーブルのスキーマ定義
-import { bin2hex } from "@/utils/bin2hex"; // バイナリデータを16進文字列に変換する関数
+import { bin2hex } from "@/utils/random"; // バイナリデータを16進文字列に変換する関数
 import { eq, or } from "drizzle-orm"; // SQL条件を構築するための演算子
 import Session from "@/interfaces/session"; // セッションオブジェクトの型定義
 

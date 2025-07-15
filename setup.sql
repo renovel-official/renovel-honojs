@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT,
   name TEXT,
@@ -10,23 +10,21 @@ CREATE TABLE users (
   role TEXT DEFAULT 'user'
 );
 
-CREATE TABLE novels (
+CREATE TABLE IF NOT EXISTS novels (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT NOT NULL,
   type TEXT NOT NULL,
   title TEXT NOT NULL DEFAULT '名称未設定',
   phrase TEXT NOT NULL,
-  point INTEGER NOT NULL DEFAULT 0,
   description TEXT NOT NULL,
   genre TEXT NOT NULL,
   tags TEXT, -- JSON文字列として保存
   text TEXT,
-  is_public INTEGER NOT NULL DEFAULT 1, -- booleanは0/1
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now'))
+  created_at INTEGER DEFAULT (datetime('now')),
+  updated_at INTEGER DEFAULT (datetime('now'))
 );
 
-CREATE TABLE author_novels (
+CREATE TABLE IF NOT EXISTS author_novels (
   id INTEGER PRIMARY KEY,
   slug TEXT,
   novel_id TEXT,
@@ -34,7 +32,7 @@ CREATE TABLE author_novels (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE episodes (
+CREATE TABLE IF NOT EXISTS episodes (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   novel_id TEXT NOT NULL,
   slug TEXT NOT NULL,
@@ -47,7 +45,7 @@ CREATE TABLE episodes (
   updated_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE episode_comments (
+CREATE TABLE IF NOT EXISTS episode_comments (
   id INTEGER PRIMARY KEY,
   comment_id TEXT,
   author_id TEXT,
@@ -59,21 +57,21 @@ CREATE TABLE episode_comments (
   created_at INTEGER
 );
 
-CREATE TABLE follow_novels (
+CREATE TABLE IF NOT EXISTS follow_novels (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id TEXT NOT NULL,
   novel_id TEXT NOT NULL,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE follow_users (
+CREATE TABLE IF NOT EXISTS follow_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id TEXT NOT NULL,
   user_id TEXT NOT NULL,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE point_user (
+CREATE TABLE IF NOT EXISTS point_user (
   id INTEGER PRIMARY KEY,
   email TEXT,
   novel_id TEXT,
@@ -81,7 +79,7 @@ CREATE TABLE point_user (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE sessions (
+CREATE TABLE IF NOT EXISTS sessions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   token TEXT,
   email TEXT,
@@ -89,7 +87,7 @@ CREATE TABLE sessions (
   last_logined_at INTEGER
 );
 
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   room_id TEXT,
   slug TEXT,
@@ -98,14 +96,14 @@ CREATE TABLE messages (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE rooms (
+CREATE TABLE IF NOT EXISTS rooms (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT,
   title TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
-CREATE TABLE room_users (
+CREATE TABLE IF NOT EXISTS room_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   room_id TEXT,
   user_id TEXT,

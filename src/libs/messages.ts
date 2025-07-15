@@ -2,7 +2,7 @@ import { Message, Room, RoomUser, RoomResult } from "@/interfaces/messages";
 import { rooms, roomUsers, messages } from "@/db/d1";
 import { getUnixTimestamp, formatJST } from "@/utils/timestamp";
 import { DrizzleD1Database } from "drizzle-orm/d1";
-import { bin2hex } from "@/utils/bin2hex";
+import { bin2hex } from "@/utils/random";
 import { eq, asc, and, gt, desc } from "drizzle-orm";
 
 async function getRooms(db: DrizzleD1Database, userId: string): Promise<Array<RoomResult>> {

@@ -59,14 +59,12 @@ const novels = sqliteTable('novels', {
   type: text('type').notNull(),
   title: text('title').notNull().default('名称未設定'),
   phrase: text('phrase').notNull(),
-  point: integer('point').notNull().default(0),
   description: text('description').notNull(),
   genre: text('genre').notNull(),
   tags: text('tags'), // JSON文字列として保存
   text: text('text'),
-  is_public: integer('is_public').notNull().default(1),
   created_at: integer('created_at'),
-  updated_at: text('updated_at'),
+  updated_at: integer('updated_at'),
 });
 
 // point_userテーブル

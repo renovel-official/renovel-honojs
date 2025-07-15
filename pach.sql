@@ -1,3 +1,7 @@
--- d6bdbcc6b6af81cb98265a72d188e4fa
-
-delete from messages where room_id = 'd6bdbcc6b6af81cb98265a72d188e4fa';
+DROP TABLE IF EXISTS novels;
+DROP TABLE IF EXISTS author_novels;
+DROP TABLE IF EXISTS episodes;
+DROP TABLE IF EXISTS episode_comments;
+DROP TABLE IF EXISTS follow_novels;
+DROP TABLE IF EXISTS follow_users;
+DROP TABLE IF EXISTS point_user;

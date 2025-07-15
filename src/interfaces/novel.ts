@@ -9,22 +9,20 @@ interface Novel {
 
     title: string;
     phrase: string;
-    point: number;
     description: string;
     genre: NovelGenre;
     tags?: string;
     text?: string;
-    is_public?: boolean;
 
-    created_at?: string;
-    updated_at?: string;
+    created_at?: number;
+    updated_at?: number;
 }
 
 interface NovelAuthor {
     id?: number;
     slug: string;
     novel_id: string;
-    is_admin: boolean;
+    is_admin: number;
     created_at: string;
 }
 
@@ -34,10 +32,24 @@ interface NovelResult {
     view?: number;
     follower?: number;
     episodes?: Episode[];
-    isAuthor?: boolean;
-    isAdmin?: boolean;
-    isPublic?: boolean;
+    isAuthor?: 0 | 1;
+    isAdmin?: 0 | 1;
+    isPublic?: 0 | 1;
+}
+
+interface NovelPayload {
+    title: string;
+    phrase: string;
+    description?: string;
+    genre: NovelGenre;
+    tags: string;
+    text?: string;
+
+    type: NovelType;
+    
+    authors: string[];
+    admin: string;
 }
 
 
-export type { Novel, NovelAuthor, NovelResult };
+export type { Novel, NovelAuthor, NovelResult, NovelPayload };
