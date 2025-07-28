@@ -29,7 +29,7 @@ export default function AuthorWorks({
                 title="作品管理"
                 description="あなたの作品を管理・編集できます"
                 actionText="新しい作品を作成"
-                actionHref="/author/works/create"
+                actionHref="/author/works/new"
             />
 
             {/* 作品統計 */}

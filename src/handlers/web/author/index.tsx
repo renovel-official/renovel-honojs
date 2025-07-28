@@ -8,9 +8,9 @@ export default async function authorHandler(c: Context<Env>) {
     const novel = c.get('novel');
     const user = c.get('user');
     const db = c.get('db');
-    const novels = await novel?.getNovelsFromUser(user?.slug ?? "", 5);
+    const novels = await novel?.getNovelsFromUser(user?.slug ?? "", 5) ?? [];
 
-    const rooms = await getRooms(db, user?.slug ?? "");
+    const rooms = await getRooms(db, user?.slug ?? "", 5) ?? [];
     /**
      * author: string;
     roomId: string;

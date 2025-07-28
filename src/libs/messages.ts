@@ -5,8 +5,8 @@ import { DrizzleD1Database } from "drizzle-orm/d1";
 import { bin2hex } from "@/utils/random";
 import { eq, asc, and, gt, desc } from "drizzle-orm";
 
-async function getRooms(db: DrizzleD1Database, userId: string): Promise<Array<RoomResult>> {
-    const getResult = await db.select().from(roomUsers).orderBy(asc(roomUsers.id)).where(eq(roomUsers.user_id, userId)).execute();
+async function getRooms(db: DrizzleD1Database, userId: string, limit: number = 10): Promise<Array<RoomResult>> {
+    const getResult = await db.select().from(roomUsers).orderBy(asc(roomUsers.id)).where(eq(roomUsers.user_id, userId)).limit(limit).execute();
     const rooms = [];
 
     for (const roomUser of getResult) {

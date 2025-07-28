@@ -17,7 +17,7 @@ export default function NovelList({
     emptyTitle = "まだ作品がありません",
     emptyDescription = "最初の作品を作成して、創作活動を始めましょう。",
     emptyActionText = "新しい作品を作成",
-    emptyActionHref = "/author/works/create"
+    emptyActionHref = "/author/works/new"
 }: NovelListProps) {
     return (
         <div class="bg-white rounded-lg shadow-sm">
