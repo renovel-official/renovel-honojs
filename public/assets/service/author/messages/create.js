@@ -123,7 +123,7 @@ createMessageButton.addEventListener('click', async (e) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ users: userList, title: messageTitleBox.value }),
+            body: JSON.stringify({ users: userList, title: messageTitleBox.value ?? "ルーム名未設定" }),
         });
 
         const data = await response.json();

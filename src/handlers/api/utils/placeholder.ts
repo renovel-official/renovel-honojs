@@ -1,5 +1,5 @@
 import { NovelAuthor, NovelResult } from "@/interfaces/novel";
-import { getNovel } from "@/libs/novel";
+import { NovelController } from "@/libs/novel";
 import { Context } from "hono";
 import Env from "@/interfaces/utils/env";
 
@@ -13,8 +13,10 @@ async function placeholderHandler(c: Context<Env>) {
   if (isNaN(parseInt(workId))) {
     return c.json({ success: false, message: 'workId is not a number' }, 400);
   }
+
   const db = c.get('db');
-  const result: NovelResult | null = await getNovel(db, workId);
+  const novelController = new NovelController(db);
+  const result: NovelResult | null = await novelController.getNovel(workId);
 
   if (!result) {
     return c.json({ success: false, message: 'work not found' }, 404);
@@ -47,7 +49,7 @@ async function placeholderHandler(c: Context<Env>) {
       <!-- 紹介文 -->
       <text x="50%" y="58%" text-anchor="middle"
         fill="#4b5563" font-size="28" font-family="'Helvetica Neue', sans-serif">
-        ${ work.description.length > 15 ? work.description.slice(0, 15) + "..." : work.description }
+        ${work.description.length > 15 ? work.description.slice(0, 15) + "..." : work.description}
       </text>
 
       <!-- 作者名 -->

@@ -1,14 +1,21 @@
 import { Hono } from "hono";
+// v1 API handlers
 import { loginHandler } from "./api/v1/login";
 import { logoutHandler } from "./api/v1/logout";
-import { authorHandler } from "./api/v2/[slug]/author";
-import { sessionHandler } from "./api/v1/session";
-import { authorsHandler } from "./api/v2/authors";
 import { registerHandler } from "./api/v1/register";
+import { sessionHandler } from "./api/v1/session";
+// v2 API handlers
+import { authorHandler } from "./api/v2/[slug]/author";
+import { authorsHandler } from "./api/v2/authors";
+// v3 API handlers
+import { novelCreateHandler, novelListHandler } from "./api/v3/novel";
+// v4 API handlers
 import { createRoomHandler } from "./api/v4/create";
-import { placeholderHandler } from "./api/utils/placeholder";
 import { getMessageRealTimeTokenHandler } from "./api/v4/[roomId]/token";
 import { postMessagesHandler, getMessagesHandler } from "./api/v4/[roomId]/messages";
+// utils API handlers
+import { placeholderHandler } from "./api/utils/placeholder";
+
 import Env from "@/interfaces/utils/env";
 
 export default ((app: Hono<Env>) => {
@@ -24,8 +31,8 @@ export default ((app: Hono<Env>) => {
     app.get('/api/v2/authors/:userId', authorHandler);
     
     // 作品関連api
-    app.get('/api/v3/works', );
-    app.post('/api/v3/works', );
+    app.get('/api/v3/works', novelListHandler);
+    app.post('/api/v3/works', novelCreateHandler);
 
     app.get('/api/v3/works/:workId', );
     app.put('/api/v3/works/:workId', );

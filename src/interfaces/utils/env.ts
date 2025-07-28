@@ -1,11 +1,12 @@
 import { DrizzleD1Database } from "drizzle-orm/d1";
-import { D1Database, DurableObjectNamespace } from "@cloudflare/workers-types";
+import { NovelController } from "@/libs/novel";
+import { D1Database } from "@cloudflare/workers-types";
 import User from "../user";
+
 
 type Env = {
     Bindings: {
-        DB: D1Database;
-        ChatRoom: DurableObjectNamespace;
+        DB: D1Database
     };
     Variables: {
         db: DrizzleD1Database;
@@ -15,7 +16,8 @@ type Env = {
             title?: string;
             description?: string;
             image?: string;
-        }
+        },
+        novel?: NovelController;
     }
 };
 
