@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 // usersテーブル
 const users = sqliteTable('users', {
@@ -16,7 +16,7 @@ const users = sqliteTable('users', {
 // author_novelsテーブル
 const authorNovels = sqliteTable('author_novels', {
   id: integer('id').primaryKey(),
-  email: text('email'),
+  slug: text('slug'),
   novel_id: text('novel_id'),
   is_admin: integer('is_admin'), // 0 or 1
   created_at: integer('created_at'),

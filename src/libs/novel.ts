@@ -123,13 +123,26 @@ class NovelController {
         }
     }
     
-    async getNovelsFromUser(email: string, limit: number = 10, start: number = 0): Promise<null | Novel[]> {
+    async getNovelsFromUser(slug: string, limit: number = 10, start: number = 0): Promise<null | NovelResult[]> {
         try {
-            const results = await this.db.select().from(authorNovels).where(
-                eq(authorNovels.email, email)
-            ).limit(limit).offset(start).execute();
-    
-            return results as any[] as Novel[];
+            const results: NovelAuthor[] = await this.db.select().from(authorNovels).where(
+                eq(authorNovels.slug, slug)
+            ).limit(limit).offset(start).execute() as unknown as NovelAuthor[];
+
+            if (results.length === 0) {
+                return [];
+            }
+
+            const data = [];
+            for (const result of results) {
+                const novel = await this.getNovel(result.novel_id);
+                if (novel) {
+                    data.push(novel);
+                }
+            }
+
+            return data as NovelResult[];
+
         } catch (e) {
             return null;
         }
@@ -161,14 +174,17 @@ class NovelController {
     
         try {
             await this.db.insert(novels).values(novel as any).execute();
-        } catch {
-            return null;
+        } catch (e) {
+            // throw new Error("Failed to create novel: " + e);
+            return e as any;
         }
     
         try {
             await this.db.insert(authorNovels).values(novelAuthors as any).execute();
-        } catch {
-            return null;
+        } catch (e) {
+            // console.error("Failed to create novel authors:", e);
+            // throw new Error("Failed to create novel authors: " + e);
+            return e as any;
         }
     
         return await this.getNovel(slug);
