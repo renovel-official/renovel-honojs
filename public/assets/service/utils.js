@@ -132,7 +132,7 @@ function getUnixTimestamp() {
 
 async function getUser(slug) {
     try {
-        const response = await fetch(`/api/v1/users/${encodeURIComponent(slug)}`);
+        const response = await fetch(`/api/v2/users/${encodeURIComponent(slug)}`);
         const data = await response.json();
 
         if (data.success) {
