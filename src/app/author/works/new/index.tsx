@@ -86,9 +86,9 @@ export default function CreateWork() {
                         </label>
                         <Input
                             id="tags"
-                            placeholder="カンマ区切りでタグを入力（例: 学園, 恋愛, ファンタジー）"
+                            placeholder="カンマ区切りでタグを入力（例: 学園 恋愛 ファンタジー）"
                         />
-                        <p class="mt-1 text-sm text-gray-500">作品の特徴を表すタグをカンマ区切りで入力してください</p>
+                        <p class="mt-1 text-sm text-gray-500">作品の特徴を表すタグを半角スペース区切りで入力してください</p>
                     </div>
 
                     {/* あらすじ */}
@@ -137,22 +137,12 @@ export default function CreateWork() {
                         </a>
                         <div class="flex space-x-3">
                             <button
-                                type="submit"
-                                name="action"
-                                value="draft"
-                                class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-200 flex items-center"
-                            >
-                                <i class="fas fa-save mr-2"></i>
-                                下書き保存
-                            </button>
-                            <button
-                                type="submit"
-                                name="action"
+                                name="save"
                                 value="publish"
                                 class="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition duration-200 flex items-center"
                             >
                                 <i class="fas fa-upload mr-2"></i>
-                                公開する
+                                保存する
                             </button>
                         </div>
                     </div>
