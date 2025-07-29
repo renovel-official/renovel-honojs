@@ -1,3 +1,4 @@
+import Input from "@/components/ui/author/works/input";
 import { NovelGenreData } from "@/types/genre";
 
 export default function CreateWork() {
@@ -17,14 +18,12 @@ export default function CreateWork() {
                         <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
                             作品タイトル <span class="text-red-500">*</span>
                         </label>
-                        <input
-                            type="text"
+                        <Input
                             id="title"
                             name="title"
-                            required
-                            maxlength={100}
+                            maxLength={100}
                             placeholder="作品のタイトルを入力してください"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                            required
                         />
                         <p class="mt-1 text-sm text-gray-500">最大100文字まで</p>
                     </div>
@@ -34,16 +33,13 @@ export default function CreateWork() {
                         <label for="phrase" class="block text-sm font-medium text-gray-700 mb-2">
                             キャッチフレーズ <span class="text-red-500">*</span>
                         </label>
-                        <input
-                            type="text"
+                        <Input
                             id="phrase"
-                            name="phrase"
                             required
-                            maxlength={200}
-                            placeholder="作品の魅力を一言で表現してください"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
+                            maxLength={30}
+                            placeholder="作品に関して何か一言"
                         />
-                        <p class="mt-1 text-sm text-gray-500">最大200文字まで</p>
+                        <p class="mt-1 text-sm text-gray-500">最大30文字まで</p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -88,12 +84,9 @@ export default function CreateWork() {
                         <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
                             タグ
                         </label>
-                        <input
-                            type="text"
+                        <Input
                             id="tags"
-                            name="tags"
                             placeholder="カンマ区切りでタグを入力（例: 学園, 恋愛, ファンタジー）"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-200"
                         />
                         <p class="mt-1 text-sm text-gray-500">作品の特徴を表すタグをカンマ区切りで入力してください</p>
                     </div>
@@ -115,7 +108,7 @@ export default function CreateWork() {
                     </div>
 
                     {/* 本文（短編の場合） */}
-                    <div>
+                    <div id="text-section" class={"hidden"}>
                         <label for="text" class="block text-sm font-medium text-gray-700 mb-2">
                             本文
                         </label>
