@@ -127,6 +127,24 @@ export default function CreateWork() {
                         <p class="mt-1 text-sm text-gray-500">後から編集することもできます</p>
                     </div>
 
+                    {/* 共同作者設定 */}
+                    <div class={`flex flex-col space-y-4`}>
+                        <label for="co-authors" class="block text-sm font-medium text-gray-700 mb-2">
+                            共同作者
+                        </label>
+                        
+                        <div id="authors">
+
+                        </div>
+
+                        <Input
+                            id="author-id"
+                            placeholder="共同作者のIDを入力してください"
+                        />
+                        <button id="author-add" class={`text-center justify-center px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition duration-200 flex items-center cursor-pointer`}>追加</button>
+                        <p class="mt-1 text-sm text-gray-500">共同作者がいる場合は名前を入力してください</p>
+                    </div>
+
                     {/* アクションボタン */}
                     <div class="flex items-center justify-between pt-6 border-t border-gray-200">
                         <a
@@ -137,9 +155,9 @@ export default function CreateWork() {
                         </a>
                         <div class="flex space-x-3">
                             <button
-                                name="save"
+                                id="save"
                                 value="publish"
-                                class="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition duration-200 flex items-center"
+                                class="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition duration-200 flex items-center cursor-pointer"
                             >
                                 <i class="fas fa-upload mr-2"></i>
                                 保存する
