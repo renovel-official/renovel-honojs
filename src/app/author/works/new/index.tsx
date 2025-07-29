@@ -160,7 +160,7 @@ export default function CreateWork() {
             </div>
 
 
-            <script src="/assets/service/works/app.js"></script>
+            <script src="/assets/service/author/works/create.js"></script>
         </main>
     )
 }
