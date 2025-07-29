@@ -10,7 +10,7 @@ interface InputProps {
 export default function Input({
     placeholder = "",
     type = "text",
-    className = "",
+    className = "w-full",
     ...props
 }: InputProps) {
     return (
