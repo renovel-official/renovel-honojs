@@ -50,7 +50,6 @@ async function novelCreateHandler(c: Context<Env>) {
     }
 
     const body: NovelPayload = await c.req.json();
-    body.authors.push(user.slug); // ユーザーを作者として追加
 
     try {
         const novelData = await novel.createNovel({ ...body, admin: user.slug });
