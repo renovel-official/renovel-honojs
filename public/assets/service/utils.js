@@ -82,7 +82,7 @@ async function sendMessageLog(content) {
 }
 
 /**
- * @returns { string | null } - 自身のslugを返します
+ * @returns { Promise<string | null> } - 自身のslugを返します
  */
 async function connect() {
     try {
@@ -123,4 +123,26 @@ function uuid() {
  */
 function getUnixTimestamp() {
     return Math.floor(Date.now() / 1000);
+}
+
+/**
+ * @param { string } slug
+ * @return { Promise< import('@/interfaces/user').User | null > }
+ */
+
+async function getUser(slug) {
+    try {
+        const response = await fetch(`/api/v1/users/${encodeURIComponent(slug)}`);
+        const data = await response.json();
+
+        if (data.success) {
+            return data.data;
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (e) {
+        console.error(e);
+        alert('ユーザー情報の取得に失敗しました');
+        return null;
+    }
 }
