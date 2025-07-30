@@ -5,6 +5,7 @@ const tagsEle = document.querySelector('#tags');
 const descriptionEle = document.querySelector('#description');
 const typeEle = document.querySelector('#type');
 const contentAreaEle = document.querySelector('#text-section');
+const textEle = document.querySelector('#text');
 const authorsEle = document.querySelector('#authors');
 const authorEle = document.querySelector('#author-id');
 const authorAddEle = document.querySelector('#author-add');
@@ -85,7 +86,7 @@ saveButtonEle.addEventListener('click', async (e) => {
         tags: tagsEle.value,
         description: descriptionEle.value,
         type: typeEle.value,
-        content: contentAreaEle.value
+        text: textEle.value
     }
 
     const response = await fetch('/api/v3/works', {
