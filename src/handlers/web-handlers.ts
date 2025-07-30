@@ -2,14 +2,17 @@ import { Hono } from "hono";
 import authorMessagesCreateHandler from "./web/author/messages/create";
 import messageRoomSettingHandler from "./web/author/messages/[roomId]/setting";
 import authorMessagesHandler from "./web/author/messages";
-import createWorkHandler from "./web/author/works/new";
+import workControllerHandler from "./web/author/works/[workId]";
 import messageRoomHandler from "./web/author/messages/[roomId]";
 import authorWorksHandler from "./web/author/works";
+import createWorkHandler from "./web/author/works/new";
 import registerHandler from "./web/register";
 import authorHandler from "./web/author";
 import loginHandler from "./web/login";
 import rootHandler from "./web/root";
 import Env from "@/interfaces/utils/env";
+
+
 
 export default ((app: Hono<Env>) => {
     // Webルーティング
@@ -33,7 +36,7 @@ export default ((app: Hono<Env>) => {
 
     app.get('/author/works', authorWorksHandler);
     app.get('/author/works/new', createWorkHandler);
-    app.get('/author/works/:workId',);
+    app.get('/author/works/:workId', workControllerHandler);
     app.get('/author/works/:workId/episodes/:episodeId',);
 
     app.get('/author/blogs',);
