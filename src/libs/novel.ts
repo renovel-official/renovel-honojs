@@ -158,8 +158,9 @@ class NovelController {
             created_at: createdAt,
         }));
 
-        // すでにadminが設定されているか確認
-        if (!novelAuthors.find(author => author.slug === data.admin)) {
+        // adminがすでに存在するか確認
+        const existsAdmin = novelAuthors.some(author => author.slug === data.admin);
+        if (!existsAdmin) {
             novelAuthors.push({
                 slug: data.admin,
                 novel_id: slug,
